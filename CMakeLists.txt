@@ -13,12 +13,11 @@ endif()
 add_library(encoder OBJECT 
     src/Encoder.h
     src/Encoder.cpp
- "src/FileRegister.h")
+ )
 
 add_library(decoder OBJECT 
    src/Decoder.h
-    src/Decoder.cpp
- "src/FileRegister.h")
+    src/Decoder.cpp)
 
 
 add_executable(${CMAKE_PROJECT_NAME}

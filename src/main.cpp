@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include "h4z0t.h"
+#include "FileRegister.h"
 
 #define FLAG_PREFIX "--"
 
@@ -41,6 +42,12 @@ int main(int argc, char* argv[])
 			}
 			Encoder encoder;
 			encoder.MakeHeader();
+
+			auto files = FileRegister::GetFileList(argv[2]);
+			for (auto& f:files)
+			{
+				std::cout<<f.path() <<std::endl;
+			}
 
 		}
 		else

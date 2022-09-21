@@ -17,6 +17,7 @@ enum  Compression
 	None
 };
 
+
 const uint32_t FMT_VERSION = 1;
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
