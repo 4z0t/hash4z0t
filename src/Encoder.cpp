@@ -32,7 +32,7 @@ void Encoder::MakeHeader()
 	assert(this->_outputFile != nullptr && this->_outputFile->is_open(), "file wasnt created and opened");
 
 	this->_outputFile->write(FMT_HEADER_, strlen(FMT_HEADER_))
-		.write(reinterpret_cast<const char*>(&FMT_VERSION), sizeof(uint32_t));
+		.write(reinterpret_cast<const char*>(&FMT_VERSION), sizeof(FMT_VERSION));
 
 
 

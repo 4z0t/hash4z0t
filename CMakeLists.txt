@@ -13,12 +13,12 @@ endif()
 add_library(encoder OBJECT 
     src/Encoder.h
     src/Encoder.cpp
-)
+ "src/FileRegister.h")
 
 add_library(decoder OBJECT 
    src/Decoder.h
     src/Decoder.cpp
-)
+ "src/FileRegister.h")
 
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -26,7 +26,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp
     src/h4z0t.h
       
-)
+ "src/FileRegister.h")
 
 set_target_properties(${CMAKE_PROJECT_NAME} encoder decoder PROPERTIES
             CXX_STANDARD 17
