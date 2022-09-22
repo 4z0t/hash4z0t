@@ -27,8 +27,23 @@ int main(int argc, char* argv[])
 {
 	if (argc < 3)
 	{
-		std::cout << "Not enough arguments";
+#if _DEBUG 
+		std::cout << "Encoding: \n";
+		Encoder encoder;
+		encoder.MakeHeader();
+		auto s = "C:\\Users\\gaste\\Downloads\\";
+		auto files = FileRegister::GetFileList(s);
+		for (auto& f : files)
+		{
 
+			std::cout << f.path() << std::endl;
+			std::cout << f.path().lexically_relative(s) << std::endl;
+			File file(f.path(), f.path().lexically_relative(s));
+			encoder.WriteFileHeader(file.MakeHeader());
+		}
+#elif
+			std::cout << "Not enough arguments";
+#endif
 	}
 	else
 	{
@@ -56,9 +71,10 @@ int main(int argc, char* argv[])
 
 				std::cout << f.path() << std::endl;
 				std::cout << f.path().lexically_relative(argv[2]) << std::endl;
-				std::cout << f.path().parent_path() << std::endl;
-				std::cout << f.path().relative_path() << std::endl;
+				File file(f.path(), f.path().lexically_relative(argv[2]));
+				encoder.WriteFileHeader(file.MakeHeader());
 			}
+
 
 		}
 		else

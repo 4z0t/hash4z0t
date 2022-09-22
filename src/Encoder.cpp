@@ -34,6 +34,10 @@ void Encoder::MakeHeader()
 	this->_outputFile->write(FMT_HEADER_, strlen(FMT_HEADER_))
 		.write(reinterpret_cast<const char*>(&FMT_VERSION), sizeof(FMT_VERSION));
 
+}
 
-
+Encoder& Encoder::WriteFileHeader(File::Header h)
+{
+	this->_outputFile->write(reinterpret_cast<const char*>(&h), sizeof(h));
+	return *this;
 }

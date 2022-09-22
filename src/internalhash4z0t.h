@@ -8,7 +8,7 @@
 
 
 typedef uint32_t u32;
-enum DataType
+enum class DataType
 {
 	Folder,
 	File

@@ -24,8 +24,8 @@ public:
 	Header	MakeHeader()
 	{
 		Header h;
-		h.nameLen = _path.u8string().length();
-		h.dataLen = FS::directory_entry(_relative).file_size();
+		h.nameLen = _relative.u8string().length();
+		h.dataLen = FS::directory_entry(_path).file_size();
 		return h;
 	}
 

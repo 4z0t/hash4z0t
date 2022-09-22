@@ -1,6 +1,7 @@
 #pragma once
 
 #include "internalhash4z0t.h"
+#include "File.h"
 
 	class Encoder
 	{
@@ -22,6 +23,8 @@
 			if (this->_outputFile->is_open())this->_outputFile->close();
 			delete this->_outputFile;
 		}
+
+		Encoder& WriteFileHeader(File::Header h);
 
 	protected:
 		std::fstream* _outputFile = nullptr;
