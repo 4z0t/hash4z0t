@@ -84,13 +84,8 @@ int main(int argc, char* argv[])
 			for (u32 i = 0; i < n; i++)
 			{
 				File::Header h = decoder.Read<File::Header>();
-				std::cout << "data " << h.dataLen << std::endl;
-				std::cout << "name " << h.nameLen << std::endl;
 				std::string name = decoder.ReadString(h.nameLen);
-				std::cout << name << std::endl;
 				File file(curDir / name);
-				std::cout << (curDir / name).parent_path() << std::endl;
-
 				std::filesystem::create_directories((curDir / name).parent_path());
 				if (file.Open(false))
 				{
