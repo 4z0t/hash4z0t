@@ -15,6 +15,11 @@
 #define is_decode(s) (strcmp((s), DECODE_FLAG) == 0)
 #define is_encode(s) (strcmp((s), ENCODE_FLAG) == 0)
 
+void dir_test()
+{
+
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -44,9 +49,13 @@ int main(int argc, char* argv[])
 			encoder.MakeHeader();
 
 			auto files = FileRegister::GetFileList(argv[2]);
-			for (auto& f:files)
+			for (auto& f : files)
 			{
-				std::cout<<f.path() <<std::endl;
+
+				std::cout << f.path() << std::endl;
+				std::cout << f.path().lexically_relative(argv[2]) << std::endl;
+				std::cout << f.path().parent_path() << std::endl;
+				std::cout << f.path().relative_path() << std::endl;
 			}
 
 		}
