@@ -30,6 +30,9 @@
 
 		Encoder& WriteFileHeader(File::Header h);
 
+		Encoder& WriteString(std::string);
+		Encoder& WriteString(const char*);
+
 	protected:
 		std::fstream* _outputFile = nullptr;
 

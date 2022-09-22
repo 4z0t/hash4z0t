@@ -1,6 +1,6 @@
 #pragma once
 #include "internalhash4z0t.h"
-
+#include <sstream>
 class Decoder
 {
 public:
@@ -26,7 +26,13 @@ public:
 
 	void _OpenFile(Path);
 
-
+	std::string ReadString(u32 len)
+	{
+		std::stringstream ss;
+		for (u32 i = 0; i < len; i++)
+			ss.put(this->_inputFile->get());
+		return ss.str();
+	}
 
 	~Decoder()
 	{

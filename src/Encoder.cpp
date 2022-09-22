@@ -1,4 +1,5 @@
 #include "Encoder.h"
+#include "Encoder.h"
 
 Encoder::Encoder()
 {
@@ -39,7 +40,21 @@ void Encoder::MakeHeader()
 Encoder& Encoder::WriteFileHeader(File::Header h)
 {
 	return this->Write(h);
-	
+
+}
+
+Encoder& Encoder::WriteString(const char* s)
+{
+
+	this->_outputFile->write(s, strlen(s));
+	return *this;
+}
+
+Encoder& Encoder::WriteString(std::string s)
+{
+
+	this->_outputFile->write(s.c_str(), s.length());
+	return *this;
 }
 
 template<typename T>

@@ -71,6 +71,9 @@ int main(int argc, char* argv[])
 				File::Header h = decoder.Read<File::Header>();
 				std::cout << "data " << h.dataLen << std::endl;
 				std::cout << "name " << h.nameLen << std::endl;
+				std::string name = decoder.ReadString(h.nameLen);
+				std::cout << name << std::endl;
+
 			}
 
 
@@ -92,7 +95,10 @@ int main(int argc, char* argv[])
 				std::cout << f.path() << std::endl;
 				std::cout << f.path().lexically_relative(argv[2]) << std::endl;
 				File file(f.path(), f.path().lexically_relative(argv[2]));
-				encoder.WriteFileHeader(file.MakeHeader());
+				File::Header h = file.MakeHeader();
+				encoder.WriteFileHeader(h);
+				encoder.WriteString(file.GetName().u8string());
+
 			}
 
 
