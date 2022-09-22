@@ -89,16 +89,22 @@ int main(int argc, char* argv[])
 				std::string name = decoder.ReadString(h.nameLen);
 				std::cout << name << std::endl;
 				File file(curDir / name);
-				std::filesystem::create_directories((curDir/name).relative_path());
+				std::cout << (curDir / name).parent_path() << std::endl;
+
+				std::filesystem::create_directories((curDir / name).parent_path());
 				if (file.Open(false))
 				{
-					std::cout << "File opened" << name << std::endl;
-
+					std::cout << "File opened\t" << name << std::endl;
+					for (uintmax_t i = 0; i < h.dataLen; i++)
+					{
+						file.Put(decoder.Read<char>());
+					}
 				}
 				else
 				{
 
 					std::cout << "File not opened " << name << std::endl;
+					return 0;
 				}
 
 
@@ -124,9 +130,22 @@ int main(int argc, char* argv[])
 				std::cout << f.path() << std::endl;
 				std::cout << f.path().lexically_relative(argv[2]) << std::endl;
 				File file(f.path(), f.path().lexically_relative(argv[2]));
-				File::Header h = file.MakeHeader();
-				encoder.WriteFileHeader(h);
-				encoder.WriteString(file.GetName().u8string());
+				if (file.Open(true))
+				{
+
+					File::Header h = file.MakeHeader();
+					encoder.WriteFileHeader(h);
+					encoder.WriteString(file.GetName().u8string());
+					for (uintmax_t i = 0; i < h.dataLen; i++)
+					{
+						encoder.Put(file.Get());
+					}
+
+				}
+				else
+				{
+					std::cout << "Unable to open file " << f.path() << std::endl;
+				}
 
 			}
 

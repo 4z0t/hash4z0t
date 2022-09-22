@@ -25,7 +25,9 @@ void Encoder::_OpenFile()
 {
 	this->_outputFile = new std::fstream();
 	this->_outputFile->open(std::string(DEFAULT_OUTPUT_PATH), std::ios::binary | std::ios::out);
+	
 	if (!this->_outputFile->is_open())throw std::exception("CANT OPEN FILE");
+	//this->_outputFile->imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 }
 
 void Encoder::MakeHeader()

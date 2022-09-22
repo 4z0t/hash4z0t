@@ -5,6 +5,8 @@
 #include <fstream>
 #include <assert.h>
 #include <exception>
+#include <locale>
+#include <codecvt>
 
 
 typedef uint32_t u32;

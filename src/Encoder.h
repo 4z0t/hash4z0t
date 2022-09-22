@@ -32,6 +32,11 @@
 
 		Encoder& WriteString(std::string);
 		Encoder& WriteString(const char*);
+		Encoder& Put(char c)
+		{
+			_outputFile->put(c);
+			return *this;
+		}
 
 	protected:
 		std::fstream* _outputFile = nullptr;
