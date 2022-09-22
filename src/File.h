@@ -9,8 +9,8 @@ public:
 	using Path = FS::path;
 	static struct Header
 	{
-		u32 nameLen;
 		uintmax_t dataLen;
+		u32 nameLen;
 		Compression comp = Compression::None;
 		Encryption enc = Encryption::None;
 		Protecion prot = Protecion::None;
