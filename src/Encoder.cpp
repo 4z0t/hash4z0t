@@ -38,6 +38,21 @@ void Encoder::MakeHeader()
 
 Encoder& Encoder::WriteFileHeader(File::Header h)
 {
-	this->_outputFile->write(reinterpret_cast<const char*>(&h), sizeof(h));
+	return this->Write(h);
+	
+}
+
+template<typename T>
+Encoder& Encoder::Write(T value)
+{
+	this->_outputFile->write(reinterpret_cast<const char*>(&value), sizeof(T));
 	return *this;
+}
+
+
+void Encoder::MakeHeader(u32 fileCount)
+{
+	this->MakeHeader();
+	this->Write(fileCount);
+
 }

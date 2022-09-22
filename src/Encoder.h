@@ -15,6 +15,10 @@
 		void _OpenFile();
 
 		void MakeHeader();
+		void MakeHeader(u32 fileCount);
+
+		template<typename T>
+		Encoder& Write(T value);
 
 		~Encoder()
 		{

@@ -33,3 +33,10 @@ enum class Protecion :u32
 const u32 FMT_VERSION = 1;
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
+
+
+struct Header
+{
+	
+
+};

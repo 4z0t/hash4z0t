@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 			encoder.WriteFileHeader(file.MakeHeader());
 		}
 #elif
-			std::cout << "Not enough arguments";
+		std::cout << "Not enough arguments";
 #endif
 	}
 	else
@@ -54,6 +54,26 @@ int main(int argc, char* argv[])
 			{
 				std::cout << "\t" << argv[i] << "\n";
 			}
+			Decoder decoder{ std::string(argv[2]) };
+			if (!decoder.VerifyFormat())
+			{
+				std::cout << "File is not an encoded one" << std::endl;
+				return 0;
+			}
+			if (!decoder.VerifyVersion())
+			{
+				std::cout << "File has incorrect version of format" << std::endl;
+				return 0;
+			}
+			u32 n = decoder.Read<u32>();
+			for (u32 i = 0; i < n; i++)
+			{
+				File::Header h = decoder.Read<File::Header>();
+				std::cout << "data " << h.dataLen << std::endl;
+				std::cout << "name " << h.nameLen << std::endl;
+			}
+
+
 		}
 		else if (is_encode(argv[1]))
 		{
@@ -63,9 +83,9 @@ int main(int argc, char* argv[])
 				std::cout << "\t" << argv[i] << "\n";
 			}
 			Encoder encoder;
-			encoder.MakeHeader();
 
 			auto files = FileRegister::GetFileList(argv[2]);
+			encoder.MakeHeader(files.size());
 			for (auto& f : files)
 			{
 

@@ -7,7 +7,7 @@ class File
 
 public:
 	using Path = FS::path;
-	struct Header
+	static struct Header
 	{
 		u32 nameLen;
 		uintmax_t dataLen;
