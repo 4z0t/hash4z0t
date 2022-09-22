@@ -21,6 +21,12 @@ public:
 
 	}
 
+	File(const Path& path) :_path(path), _relative()
+	{
+
+	}
+
+
 	Header	MakeHeader()
 	{
 		Header h;
@@ -34,12 +40,41 @@ public:
 		return _relative;
 	}
 
+	bool Open(bool read)
+	{
+		assert(_file == nullptr);
+		_file = new std::fstream();
+		_file->open(_path, (read ? std::ios::in : std::ios::out) | std::ios::binary);
+	}
+
+	char Get()
+	{
+		assert(_file != nullptr);
+		return _file->get();
+	}
+
+	void Put(char c)
+	{
+		assert(_file != nullptr);
+		_file->put(c);
+	}
+
+	~File()
+	{
+		if (_file != nullptr)
+		{
+			_file->close();
+			delete _file;
+		}
+	}
 
 
 
 private:
 	Path _path;
 	Path _relative;
+
+	std::fstream* _file;
 
 
 };
