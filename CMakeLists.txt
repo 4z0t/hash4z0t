@@ -25,7 +25,8 @@ add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp
     src/h4z0t.h
       
- "src/FileRegister.h")
+ "src/FileRegister.h"
+"src/File.h")
 
 set_target_properties(${CMAKE_PROJECT_NAME} encoder decoder PROPERTIES
             CXX_STANDARD 17

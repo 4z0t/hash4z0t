@@ -6,18 +6,30 @@
 #include <assert.h>
 #include <exception>
 
+
+typedef uint32_t u32;
 enum DataType
 {
 	Folder,
 	File
 };
 
-enum  Compression
+enum class Compression:u32
+{
+	None
+};
+
+enum class Encryption :u32
+{
+	None
+};
+
+enum class Protecion :u32
 {
 	None
 };
 
 
-const uint32_t FMT_VERSION = 1;
+const u32 FMT_VERSION = 1;
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
