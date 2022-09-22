@@ -49,10 +49,21 @@ int main(int argc, char* argv[])
 	{
 		if (is_decode(argv[1]))
 		{
+			std::string savePath;
 			std::cout << "Decoding: \n";
 			for (int i = 2; i < argc; i++)
 			{
-				std::cout << "\t" << argv[i] << "\n";
+				if (strcmp("--into", argv[i]) == 0)
+				{
+					if (i + 1 == argc)
+
+						std::cout << "incorrect location name" << std::endl;
+					else
+						savePath = argv[++i];
+
+				}
+				else
+					std::cout << "\t" << argv[i] << "\n";
 			}
 			Decoder decoder{ std::string(argv[2]) };
 			if (!decoder.VerifyFormat())
@@ -66,6 +77,10 @@ int main(int argc, char* argv[])
 				return 0;
 			}
 			u32 n = decoder.Read<u32>();
+			std::cout << savePath << std::endl;
+			auto curDir = std::filesystem::current_path();
+			if (!savePath.empty())
+				curDir /= savePath;
 			for (u32 i = 0; i < n; i++)
 			{
 				File::Header h = decoder.Read<File::Header>();
@@ -73,6 +88,19 @@ int main(int argc, char* argv[])
 				std::cout << "name " << h.nameLen << std::endl;
 				std::string name = decoder.ReadString(h.nameLen);
 				std::cout << name << std::endl;
+				File file(curDir / name);
+				std::filesystem::create_directories((curDir/name).relative_path());
+				if (file.Open(false))
+				{
+					std::cout << "File opened" << name << std::endl;
+
+				}
+				else
+				{
+
+					std::cout << "File not opened " << name << std::endl;
+				}
+
 
 			}
 
@@ -89,6 +117,7 @@ int main(int argc, char* argv[])
 
 			auto files = FileRegister::GetFileList(argv[2]);
 			encoder.MakeHeader(files.size());
+			std::cout << files.size() << std::endl;
 			for (auto& f : files)
 			{
 

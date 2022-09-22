@@ -45,6 +45,18 @@ public:
 		assert(_file == nullptr);
 		_file = new std::fstream();
 		_file->open(_path, (read ? std::ios::in : std::ios::out) | std::ios::binary);
+
+		if (_file->is_open())
+		{
+			return true;
+
+		}
+		else
+		{
+			delete _file;
+			_file = nullptr;
+			return false;
+		}
 	}
 
 	char Get()
@@ -74,7 +86,7 @@ private:
 	Path _path;
 	Path _relative;
 
-	std::fstream* _file;
+	std::fstream* _file=nullptr;
 
 
 };
