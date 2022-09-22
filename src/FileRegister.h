@@ -8,14 +8,14 @@ class FileRegister
 {
 
 public:
-	
+
 	using Path = FS::path;
 	using FileEntry = FS::directory_entry;
 	using Files = std::vector<FileEntry>;
 
-	static Files GetFileList(const Path &path);
+	static Files GetFileList(const Path& path);
 
-	static bool Exists(const Path &path);
+	static bool Exists(const Path& path);
 
 	FileRegister();
 	~FileRegister();
@@ -23,16 +23,22 @@ public:
 private:
 };
 
-FileRegister::Files FileRegister::GetFileList(const Path &path)
+FileRegister::Files FileRegister::GetFileList(const Path& path)
 {
 	if (!std::filesystem::exists(path))
 		return Files();
 	std::list<FileEntry> filesList;
-
-	for (const auto &entry : FS::directory_iterator(path))
+	if (FS::is_regular_file(path))
 	{
-		if (entry.is_regular_file())
-			filesList.push_back(entry);
+		filesList.push_back(FS::directory_entry(path));
+	}
+	else if (FS::is_directory(path))
+	{
+		for (const auto& entry : FS::recursive_directory_iterator(path))
+		{
+			if (entry.is_regular_file())
+				filesList.push_back(entry);
+		}
 	}
 	return Files(filesList.begin(), filesList.end());
 }
