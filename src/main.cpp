@@ -17,6 +17,8 @@
 #define is_decode(s) (strcmp((s), DECODE_FLAG) == 0)
 #define is_encode(s) (strcmp((s), ENCODE_FLAG) == 0)
 
+using namespace H4z0t;
+
 void dir_test()
 {
 
