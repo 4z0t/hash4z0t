@@ -65,10 +65,9 @@ namespace Compression
 			}
 
 			auto total = this->_total;
-			std::vector<unit_count> unitCount(_data.begin(), _data.end());
 			std::transform(
-				unitCount.begin(),
-				unitCount.end(),
+				_data.begin(), 
+				_data.end(),
 				std::back_inserter(this->_data),
 				[total](const unit_count& uc)
 				{
