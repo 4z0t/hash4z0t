@@ -9,7 +9,6 @@ namespace Compression
 {
 	using unit = std::uint8_t;
 	using std::size_t;
-	using std::abs;
 
 	struct Data {
 		size_t len = 0;
