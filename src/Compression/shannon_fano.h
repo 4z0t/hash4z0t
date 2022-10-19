@@ -123,6 +123,7 @@ namespace Compression
 				break;
 			}
 			size_t middle = start;
+			double passedThreshold = 0;
 			{
 				double c = 0;
 				double prev;
@@ -136,12 +137,14 @@ namespace Compression
 					{
 						if ((c - threshold) > (threshold - prev))
 						{
+							passedThreshold = prev;
 							//current one is edge
 							unitsToCodes[key].push_back(true);
 							middle = i;
 						}
 						else
 						{
+							passedThreshold = c;
 							//next one is edge
 							unitsToCodes[key].push_back(false);
 							middle = i + 1;
@@ -152,8 +155,10 @@ namespace Compression
 					unitsToCodes[key].push_back(passed);
 				}
 			}
-			Split(unitsToCodes, frequency, start, middle, threshold / 2);
-			Split(unitsToCodes, frequency, middle, end, threshold / 2);
+			auto t1 = passedThreshold / 2;
+			auto t2 = threshold - t1;
+			Split(unitsToCodes, frequency, start, middle, t1);
+			Split(unitsToCodes, frequency, middle, end, t2);
 		}
 
 		std::unordered_map<unit, Code > FrequencyToCodes(const FrequencyTable& ft)
@@ -166,7 +171,7 @@ namespace Compression
 			}
 
 			Split(unitsToCodes, v, 0, v.size(), 0.5);
-
+#if _DEBUG 
 			for (auto& p : v)
 			{
 
@@ -175,8 +180,9 @@ namespace Compression
 				{
 					std::cout << bit;
 				}
-				std::cout << "\n";
+				std::cout << "\t" << p.second << '\n';
 			}
+#endif
 			return unitsToCodes;
 		}
 
