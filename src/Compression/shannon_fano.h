@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 
-namespace Compressions
+namespace Compression
 {
 	using unit = std::uint8_t;
 	using std::size_t;
@@ -103,7 +103,14 @@ namespace Compressions
 	namespace ShannonFano
 	{
 
-		void Split(std::unordered_map<unit, Code>& unitsToCodes, const std::vector<unit_frequency>& frequency, size_t start, size_t end, double threshold)
+		void Split
+		(
+			std::unordered_map<unit, Code>& unitsToCodes,	// unit -> code
+			const std::vector<unit_frequency>& frequency,	// unit and frequency
+			size_t start,									// start index
+			size_t end,										// end index
+			double threshold								// threshold to divide groups
+		)
 		{
 			switch (end - start)
 			{

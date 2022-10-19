@@ -11,9 +11,9 @@ public:
 	{
 		uintmax_t dataLen;
 		u32 nameLen;
-		Compression comp = Compression::None;
-		Encryption enc = Encryption::None;
-		Protecion prot = Protecion::None;
+		CompressionType comp = CompressionType::None;
+		EncryptionType enc = EncryptionType::None;
+		ProtecionType prot = ProtecionType::None;
 	};
 
 	File(const Path& path, const Path& relative) :_path(path), _relative(relative)

@@ -10,6 +10,6 @@ int main(int argc, char* argv[])
 	strcpy(buff, "aaaaaaaaaaaaaaabac");
 	
 	
-	Compressions::ShannonFano::Compress(Compressions::CStringToData(buff));
+	Compression::ShannonFano::Compress(Compression::CStringToData(buff));
 
 }

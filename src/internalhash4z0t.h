@@ -16,17 +16,17 @@ enum class DataType
 	File
 };
 
-enum class Compression:u32
+enum class CompressionType:u32
 {
 	None
 };
 
-enum class Encryption :u32
+enum class EncryptionType :u32
 {
 	None
 };
 
-enum class Protecion :u32
+enum class ProtecionType :u32
 {
 	None
 };
