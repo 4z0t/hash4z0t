@@ -116,6 +116,7 @@ namespace Compression
 			case 2:
 				unitsToCodes[frequency[start].first].push_back(false);
 				unitsToCodes[frequency[start + 1].first].push_back(true);
+				__fallthrough;
 			case 1:
 			case 0:
 				return;
@@ -187,7 +188,7 @@ namespace Compression
 		}
 
 
-		[[nodiscard]]
+		_NODISCARD
 		Data Compress(const Data& input)
 		{
 			FrequencyTable f(input);
@@ -198,7 +199,7 @@ namespace Compression
 			return input;
 		}
 
-		[[nodiscard]]
+		_NODISCARD
 		Data Decompress(const Data& input)
 		{
 			return input;
