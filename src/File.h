@@ -86,7 +86,7 @@ private:
 	Path _path;
 	Path _relative;
 
-	std::fstream* _file=nullptr;
+	std::fstream* _file = nullptr;
 
 
 };
