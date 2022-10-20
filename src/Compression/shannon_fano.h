@@ -164,6 +164,19 @@ namespace Compression
 		return res;
 	}
 
+	bool MatchCode(const std::unordered_map<unit, Code>& map, const BitsVector& bits, unit& output)
+	{
+		for (const auto& ucode : map)
+		{
+			if (ucode.second == bits)
+			{
+				output = ucode.first;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	namespace ShannonFano
 	{
 
@@ -342,13 +355,32 @@ namespace Compression
 		}
 
 
+
 		_NODISCARD
 			BytesVector Decompress(const BitsVector& input)
 		{
 			size_t index;
 			auto ucodes = UnpackHead(input, index);
+			size_t size = ReadBytes<size_t>(input, index); index += sizeof(size_t) * 8;
+			BitsVector buff;
+			unit u;
+			BytesVector res;
+			res.reserve(size);
+			size_t curIndex = 0;
+			for (size_t i = index; i < input.size(); i++)
+			{
+				buff.push_back(input[i]);
+				if (MatchCode(ucodes, buff, u))
+				{
+					curIndex++;
+					res.push_back(u);
+					buff.clear();
+				}
+				if (curIndex == size)break;
+			}
 
-			return BytesVector();
+
+			return res;
 		}
 
 

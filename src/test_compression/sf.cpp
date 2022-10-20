@@ -25,7 +25,11 @@ int main(int argc, char* argv[])
 		}
 		std::cout << bits2[i];
 	}
-			std::cout << std::endl;
-	Compression::ShannonFano::Decompress(bits2);
+	std::cout << std::endl;
+	auto bytes2 = Compression::ShannonFano::Decompress(bits2);
+	for (auto b : bytes2)
+	{
+		std::cout << b ;
+	}
 
 }
