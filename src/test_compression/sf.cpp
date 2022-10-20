@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
 
 	char buff[256]{};
-	strcpy(buff, "aabbabcaaaaa");
+	strcpy(buff, "aaaaaaaaaaaaaaabhjhfgjc ki yjfghkf");
 
 
 	auto bits = Compression::ShannonFano::Compress(Compression::CStringToData(buff));

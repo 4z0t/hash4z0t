@@ -18,7 +18,7 @@ namespace Compression
 
 	Data CStringToData(char* s)
 	{
-		return{ strlen(s),	reinterpret_cast<unit*>(s) };
+		return{ strlen(s)+1,	reinterpret_cast<unit*>(s) };
 	}
 
 	using Code = std::vector<bool>;
@@ -266,9 +266,6 @@ namespace Compression
 		}
 
 
-		/*
-		*
-		*/
 		std::vector<bool> MakeHead(const std::unordered_map<unit, Code>& unitsToCodes)
 		{
 			std::vector<bool> head;
@@ -279,11 +276,6 @@ namespace Compression
 			for (const unit_Code& uc : unitsToCodes)
 			{
 				codeSize = uc.second.size();
-#if _DEBUG 
-				std::cout << (int)codeSize << std::endl;
-
-				std::cout << uc.first << std::endl;
-#endif
 				PushBytes(head, uc.first);											//unit
 				PushBytes(head, codeSize);											//code size
 				head.insert(head.end(), uc.second.begin(), uc.second.end());		//code itself
@@ -341,7 +333,6 @@ namespace Compression
 			size_t index = 0;
 			std::unordered_map<unit, Code > codes;
 			uint8_t dictSize = ReadBytes<uint8_t>(bits, index); index += 8;
-			std::cout << (int)dictSize << std::endl;
 			for (uint8_t unitId = 0; unitId < dictSize; unitId++)
 			{
 				uint8_t unit = ReadBytes<uint8_t>(bits, index); index += 8;
