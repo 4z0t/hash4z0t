@@ -114,6 +114,27 @@ namespace Compression
 		}
 	}
 
+	template<typename T>
+	T ReadBytes(const BitsVector& v, size_t start)
+	{
+		T res{};
+		for (size_t i = 0; i < sizeof(T) * 8; i++)
+		{
+
+			res |= (((T)(v[i + start])) << i);
+		}
+		return res;
+	}
+	BitsVector ReadBits(const std::vector<bool>& v, size_t start, size_t size)
+	{
+		BitsVector bits(size);
+		for (size_t i = 0; i < size; i++)
+		{
+			bits[i] = v[start + i];
+		}
+		return bits;
+	}
+
 	BytesVector ToBytes(const BitsVector& bits)
 	{
 
@@ -136,7 +157,7 @@ namespace Compression
 		{
 			for (size_t b = 0; b < 8; b++)
 			{
-				res[i * 8 + b] = (bytes[i] >> (7 - b)) & 1;
+				res[i * 8 + b] = (bytes[i] >> b) & 1;
 			}
 		}
 
@@ -245,6 +266,11 @@ namespace Compression
 			for (const unit_Code& uc : unitsToCodes)
 			{
 				codeSize = uc.second.size();
+#if _DEBUG 
+				std::cout << (int)codeSize << std::endl;
+
+				std::cout << uc.first << std::endl;
+#endif
 				PushBytes(head, uc.first);											//unit
 				PushBytes(head, codeSize);											//code size
 				head.insert(head.end(), uc.second.begin(), uc.second.end());		//code itself
@@ -287,13 +313,43 @@ namespace Compression
 			return msg;
 		}
 
-		_NODISCARD
-			Data Decompress(const Data& input)
+		/*_NODISCARD
+			BytesVector Decompress(const Data& input)
 		{
+
 			return input;
+		}*/
+
+
+
+
+		std::unordered_map<unit, Code > UnpackHead(const BitsVector& bits, size_t& i)
+		{
+			size_t index = 0;
+			std::unordered_map<unit, Code > codes;
+			uint8_t dictSize = ReadBytes<uint8_t>(bits, index); index += 8;
+			std::cout << (int)dictSize << std::endl;
+			for (uint8_t unitId = 0; unitId < dictSize; unitId++)
+			{
+				uint8_t unit = ReadBytes<uint8_t>(bits, index); index += 8;
+				uint8_t codeLen = ReadBytes <uint8_t>(bits, index); index += 8;
+				auto code = ReadBits(bits, index, codeLen); index += codeLen;
+				codes[unit] = code;
+			}
+
+			i = index;
+			return codes;
 		}
 
 
+		_NODISCARD
+			BytesVector Decompress(const BitsVector& input)
+		{
+			size_t index;
+			auto ucodes = UnpackHead(input, index);
+
+			return BytesVector();
+		}
 
 
 
