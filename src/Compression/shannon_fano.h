@@ -43,6 +43,11 @@ namespace Compression
 			return _data;
 		}
 
+		const std::unordered_map<unit, size_t>& GetMap()const
+		{
+			return _unitCount;
+		}
+
 		size_t GetTotal()const
 		{
 			return _total;
@@ -66,7 +71,7 @@ namespace Compression
 
 			auto total = this->_total;
 			std::transform(
-				_data.begin(), 
+				_data.begin(),
 				_data.end(),
 				std::back_inserter(this->_data),
 				[total](const unit_count& uc)
@@ -74,6 +79,7 @@ namespace Compression
 					return unit_frequency(uc.first, (double)uc.second / total);
 				}
 			);
+			_unitCount = std::move(_data);
 		}
 
 
@@ -93,9 +99,18 @@ namespace Compression
 
 	private:
 		std::vector<unit_frequency> _data;
+		std::unordered_map<unit, size_t> _unitCount;;
 		size_t _total;
 	};
 
+	template<typename T>
+	void PushBytes(std::vector<bool>& v, const T& val)
+	{
+		for (size_t i = 0; i < sizeof(T) * 8; i++)
+		{
+			v.push_back((val & (1 << i)) != 0);
+		}
+	}
 
 
 	namespace ShannonFano
@@ -187,11 +202,42 @@ namespace Compression
 		}
 
 
+
+		std::vector<bool> MakeHead(const std::unordered_map<unit, Code>& unitsToCodes)
+		{
+			std::vector<bool> head;
+			//head.reserve();
+			uint8_t dictSize = unitsToCodes.size();
+			uint8_t codeSize = 0;
+			PushBytes(head, dictSize);
+			for (const unit_Code& uc : unitsToCodes)
+			{
+				codeSize = uc.second.size();
+				PushBytes(head, uc.first);
+				PushBytes(head, codeSize);
+				head.insert(head.end(), uc.second.begin(), uc.second.end());
+			}
+			return head;
+		}
+
+		size_t GetEncodedSize(const FrequencyTable& ft, const std::unordered_map<unit, Code>& unitsToCodes)
+		{
+			size_t s = 0;
+			for (const unit_)
+		}
+
+		/*
+		*  | dict_size:uint8 | original_unit: unit, unit_size:uint8, unit_code : bits[unit_size] | msg_len : size_t | msg : uint8[] |
+		*  |                 |                           codes                                   |                                  |
+		*  |                        head														 |           body                   |
+		*/
 		_NODISCARD
-		Data Compress(const Data& input)
+			Data Compress(const Data& input)
 		{
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
+
+			std::vector<bool> msg = MakeHead(unitsToCodes);
 
 
 
@@ -199,7 +245,7 @@ namespace Compression
 		}
 
 		_NODISCARD
-		Data Decompress(const Data& input)
+			Data Decompress(const Data& input)
 		{
 			return input;
 		}
