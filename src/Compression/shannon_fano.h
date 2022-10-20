@@ -110,16 +110,38 @@ namespace Compression
 	{
 		for (size_t i = 0; i < sizeof(T) * 8; i++)
 		{
-			v.push_back((val & (1 << i)) != 0);
+			v.push_back((val >> i) & 1);
 		}
 	}
 
 	BytesVector ToBytes(const BitsVector& bits)
 	{
 
-		return;
+		size_t s = bits.size() / 8 + 1;
+		BytesVector res(s, 0);
+		for (size_t i = 0; i < bits.size(); i++)
+		{
+			res[i / 8] |= (((uint8_t)bits[i]) << (i % 8));
+		}
+
+		return res;
 	}
-	
+
+	BitsVector ToBits(const BytesVector& bytes)
+	{
+
+		size_t s = bytes.size() * 8;
+		BitsVector res(s, false);
+		for (size_t i = 0; i < bytes.size(); i++)
+		{
+			for (size_t b = 0; b < 8; b++)
+			{
+				res[i * 8 + b] = (bytes[i] >> (7 - b)) & 1;
+			}
+		}
+
+		return res;
+	}
 
 	namespace ShannonFano
 	{
@@ -248,7 +270,7 @@ namespace Compression
 		*  |                        head														 |           body                   |
 		*/
 		_NODISCARD
-		BitsVector	Compress(const Data& input)
+			BitsVector	Compress(const Data& input)
 		{
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
