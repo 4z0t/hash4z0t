@@ -25,6 +25,8 @@ namespace Compression
 	typedef  std::pair<unit, size_t> unit_count;
 	typedef  std::pair<unit, double> unit_frequency;
 	typedef  std::pair<unit, Code> unit_Code;
+	using BitsVector = std::vector<bool>;
+	using BytesVector = std::vector<uint8_t>;
 
 	class FrequencyTable
 	{
@@ -112,6 +114,12 @@ namespace Compression
 		}
 	}
 
+	BytesVector ToBytes(const BitsVector& bits)
+	{
+
+		return;
+	}
+	
 
 	namespace ShannonFano
 	{
@@ -202,28 +210,36 @@ namespace Compression
 		}
 
 
-
+		/*
+		*
+		*/
 		std::vector<bool> MakeHead(const std::unordered_map<unit, Code>& unitsToCodes)
 		{
 			std::vector<bool> head;
 			//head.reserve();
 			uint8_t dictSize = unitsToCodes.size();
 			uint8_t codeSize = 0;
-			PushBytes(head, dictSize);
+			PushBytes(head, dictSize);//size of a dict
 			for (const unit_Code& uc : unitsToCodes)
 			{
 				codeSize = uc.second.size();
-				PushBytes(head, uc.first);
-				PushBytes(head, codeSize);
-				head.insert(head.end(), uc.second.begin(), uc.second.end());
+				PushBytes(head, uc.first);											//unit
+				PushBytes(head, codeSize);											//code size
+				head.insert(head.end(), uc.second.begin(), uc.second.end());		//code itself
 			}
+
 			return head;
 		}
 
+		//Returns size in bits required for a message to fit
 		size_t GetEncodedSize(const FrequencyTable& ft, const std::unordered_map<unit, Code>& unitsToCodes)
 		{
 			size_t s = 0;
-			for (const unit_)
+			for (const unit_count& uc : ft.GetMap())
+			{
+				s += unitsToCodes.at(uc.first).size() * uc.second;
+			}
+			return s;
 		}
 
 		/*
@@ -232,16 +248,21 @@ namespace Compression
 		*  |                        head														 |           body                   |
 		*/
 		_NODISCARD
-			Data Compress(const Data& input)
+		BitsVector	Compress(const Data& input)
 		{
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
 
 			std::vector<bool> msg = MakeHead(unitsToCodes);
+			PushBytes(msg, f.GetTotal());
+			auto s = GetEncodedSize(f, unitsToCodes);
 
-
-
-			return input;
+			for (size_t i = 0; i < input.len; i++)
+			{
+				const auto& code = unitsToCodes[input.data[i]];
+				msg.insert(msg.end(), code.begin(), code.end());
+			}
+			return msg;
 		}
 
 		_NODISCARD
