@@ -106,7 +106,7 @@ namespace Compression
 	};
 
 	template<typename T>
-	void PushBytes(std::vector<bool>& v, const T& val)
+	void PushBytes(BitsVector& v, const T& val)
 	{
 		for (size_t i = 0; i < sizeof(T) * 8; i++)
 		{
@@ -125,7 +125,7 @@ namespace Compression
 		}
 		return res;
 	}
-	BitsVector ReadBits(const std::vector<bool>& v, size_t start, size_t size)
+	BitsVector ReadBits(const BitsVector& v, size_t start, size_t size)
 	{
 		BitsVector bits(size);
 		for (size_t i = 0; i < size; i++)
@@ -306,7 +306,7 @@ namespace Compression
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
 
-			std::vector<bool> msg = MakeHead(unitsToCodes);
+			BitsVector msg = MakeHead(unitsToCodes);
 			PushBytes(msg, f.GetTotal());
 			auto s = GetEncodedSize(f, unitsToCodes);
 
