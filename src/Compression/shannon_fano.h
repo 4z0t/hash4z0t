@@ -246,7 +246,7 @@ namespace Compression
 			uint8_t dictSize = ReadBytes<uint8_t>(bits, index); index += 8;
 			for (uint8_t unitId = 0; unitId < dictSize; unitId++)
 			{
-				uint8_t unit = ReadBytes<uint8_t>(bits, index); index += 8;
+				unit unit = ReadBytes<uint8_t>(bits, index); index += 8;
 				uint8_t codeLen = ReadBytes <uint8_t>(bits, index); index += 8;
 				auto code = ReadBits(bits, index, codeLen); index += codeLen;
 				codes[unit] = code;
