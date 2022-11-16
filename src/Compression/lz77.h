@@ -41,13 +41,20 @@ namespace Compression
 
 
 
+
+
+
 			unit prevLength = _matchLength;
 			unit prevPos = _matchPos;
 			_msg.push_back(u);
 
 			if (Match())
 			{
-
+				if (_msg.size() == _size)
+				{
+					out = End();
+					_msg.clear();
+				}
 			}
 			else
 			{
