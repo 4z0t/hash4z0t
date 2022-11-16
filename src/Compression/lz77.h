@@ -56,8 +56,8 @@ namespace Compression
 				{
 					//put ref:
 					out.push_back(0);
-					out.push_back(prevPos);
 					out.push_back(prevLength);
+					out.push_back(prevPos);
 				}
 				else
 				{
@@ -128,8 +128,8 @@ namespace Compression
 			if (Match())
 			{
 				out.push_back(0);
-				out.push_back(_matchPos);
 				out.push_back(_matchLength);
+				out.push_back(_matchPos);
 			}
 			else
 			{

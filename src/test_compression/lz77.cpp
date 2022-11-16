@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 		}
 	}*/
 
-	std::string s = "abracadabra";
+	std::string s = "aaaaaaaaaaa";
 	auto original = Compression::BytesVector(s.begin(), s.end());
 	auto bytes = Compression::LZ77::Compress(original);
 
