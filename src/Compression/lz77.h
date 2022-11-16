@@ -210,7 +210,7 @@ namespace Compression
 			{
 				unit u = input[i];
 				if (u == 0) {
-					if (isRef)
+					if (isRef) //ref symbol twice
 					{
 						res.push_back(0);
 						isRef = false;
