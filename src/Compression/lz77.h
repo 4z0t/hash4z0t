@@ -29,19 +29,6 @@ namespace Compression
 
 		bool Next(unit u, BytesVector& out)
 		{
-			if (_window.empty())
-			{
-				if (u == 0)
-					out.push_back(u);
-				out.push_back(u);
-
-				_window.push_back(u);
-				return true;
-			}
-
-
-
-
 
 
 			unit prevLength = _matchLength;
@@ -80,12 +67,6 @@ namespace Compression
 				_msg.push_back(u);
 			}
 			PushWindow(u);
-
-
-
-
-
-
 
 			return false;
 		}
@@ -211,10 +192,10 @@ namespace Compression
 
 		void ProcessRef(BytesVector& output, unit pos, unit len)
 		{
-			size_t s = output.size();
+			size_t end = output.size() - 1;
 			for (unit i = 0; i < len; i++)
 			{
-				output.push_back(output[s - pos + i - 1]);
+				output.push_back(output[end - pos + i]);
 			}
 		}
 
