@@ -54,12 +54,7 @@ namespace Compression
 
 	BitsVector ReadBits(const BitsVector& v, size_t start, size_t size)
 	{
-		BitsVector bits(size);
-		for (size_t i = 0; i < size; i++)
-		{
-			bits[i] = v[start + i];
-		}
-		return bits;
+		return BitsVector(v.begin() + start, v.begin() + start + size);
 	}
 
 	BytesVector ToBytes(const BitsVector& bits)

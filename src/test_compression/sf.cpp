@@ -25,12 +25,22 @@ std::vector<std::string> testCases = {
 	"AAAAAAAAAAAAAAAAAAAAAAAAAAA",
 	"abababbabababbababababb",
 	"asfdsdsfiutydsaif gehsafj gds fhds fkvgdv f",
-	"AAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB",
 	"",
 	"\0",
 	"1234567890",
 	"F))F))))F))F)F)F))F)F)F)F)F))F))"
-
+	"AB",
+	"ABC",
+	"AABB",
+	"AABBC",
+	"AABBCC",
+	"",
+	"",
+	"",
+	"",
+	"",
+	 
 
 };
 
