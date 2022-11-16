@@ -3,33 +3,51 @@
 #include "../Compression/shannon_fano.h"
 #include <bitset>
 
+
+bool TestSF(const std::string& s)
+{
+	auto original = Compression::BytesVector(s.begin(), s.end());
+	auto bits = Compression::ShannonFano::Compress(original);
+
+	auto bytes = Compression::ShannonFano::Decompress(bits);
+	if (bytes == original)
+		return true;
+	else
+	{
+		std::cout << std::string(bytes.begin(), bytes.end()) << "\n";
+		return false;
+	}
+}
+
+
+
+std::vector<std::string> testCases = {
+	"AAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"abababbabababbababababb",
+	"asfdsdsfiutydsaif gehsafj gds fhds fkvgdv f",
+	"AAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"",
+	"\0",
+	"1234567890",
+	"F))F))))F))F)F)F))F)F)F)F)F))F))"
+
+
+};
+
+
 int main(int argc, char* argv[])
 {
-
-	char buff[256]{};
-	strcpy(buff, "aaaaaaaaaaaaaaabhjhfgjc ki yjfghkf");
-
-
-	auto bits = Compression::ShannonFano::Compress(Compression::CStringToData(buff));
-	auto bytes = Compression::ToBytes(bits);
-	for (auto b : bytes)
+	for (auto& s : testCases)
 	{
-		std::cout << std::bitset<8>(b) << std::endl;
-	}
-	auto bits2 = Compression::ToBits(bytes);
-	for (size_t i = 0; i < bits2.size(); i++)
-	{
-		if (i % 8 == 0)
+		if (!TestSF(s))
 		{
-			std::cout << std::endl;
+			std::cerr << "Failed  compression for \t\t\"" << s << "\"\n";
 		}
-		std::cout << bits2[i];
+		else
+		{
+			std::cout << "Success compression for \t\"" << s << "\"\n";
+		}
 	}
-	std::cout << std::endl;
-	auto bytes2 = Compression::ShannonFano::Decompress(bits2);
-	for (auto b : bytes2)
-	{
-		std::cout << b ;
-	}
+
 
 }

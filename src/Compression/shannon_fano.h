@@ -8,9 +8,9 @@ namespace Compression
 	class FrequencyTable
 	{
 	public:
-		FrequencyTable(const Data& data)
+		FrequencyTable(const BytesVector& data)
 		{
-			_total = data.len;
+			_total = data.size();
 			this->_Count(data);
 			this->_Sort();
 		}
@@ -32,19 +32,19 @@ namespace Compression
 			return _total;
 		}
 	private:
-		void _Count(const Data& d)
+		void _Count(const BytesVector& data)
 		{
 			std::unordered_map<unit, size_t> _data;
 
-			for (size_t i = 0; i < d.len; i++)
+			for (size_t i = 0; i < data.size(); i++)
 			{
-				if (_data.find(d.data[i]) == _data.end())
+				if (_data.find(data[i]) == _data.end())
 				{
-					_data[d.data[i]] = 1;
+					_data[data[i]] = 1;
 				}
 				else
 				{
-					_data[d.data[i]] += 1;
+					_data[data[i]] += 1;
 				}
 			}
 
@@ -112,10 +112,11 @@ namespace Compression
 			switch (end - start)
 			{
 			case 2:
-				unitsToCodes[frequency[start].first].push_back(false);
 				unitsToCodes[frequency[start + 1].first].push_back(true);
 				__fallthrough;
 			case 1:
+				unitsToCodes[frequency[start].first].push_back(false);
+				__fallthrough;
 			case 0:
 				return;
 			default:
@@ -170,23 +171,23 @@ namespace Compression
 			}
 
 			Split(unitsToCodes, v, 0, v.size(), 0.5);
-#if _DEBUG 
-			for (auto& p : v)
-			{
-
-				std::cout << p.first << "\t[" << (int)(p.first) << "]\t";
-				for (auto& bit : unitsToCodes[p.first])
-				{
-					std::cout << bit;
-				}
-				std::cout << "\t" << p.second << '\n';
-			}
-#endif
+//#if _DEBUG 
+//			for (auto& p : v)
+//			{
+//
+//				std::cout << p.first << "\t[" << (int)(p.first) << "]\t";
+//				for (auto& bit : unitsToCodes[p.first])
+//				{
+//					std::cout << bit;
+//				}
+//				std::cout << "\t" << p.second << '\n';
+//			}
+//#endif
 			return unitsToCodes;
 		}
 
 
-		std::vector<bool> MakeHead(const std::unordered_map<unit, Code>& unitsToCodes)
+		BitsVector MakeHead(const std::unordered_map<unit, Code>& unitsToCodes)
 		{
 			std::vector<bool> head;
 			//head.reserve();
@@ -221,7 +222,7 @@ namespace Compression
 		*  |                        head														 |           body                   |
 		*/
 		_NODISCARD
-			BitsVector	Compress(const Data& input)
+			BitsVector	Compress(const BytesVector& input)
 		{
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
@@ -230,9 +231,9 @@ namespace Compression
 			PushBytes(msg, f.GetTotal());
 			auto s = GetEncodedSize(f, unitsToCodes);
 
-			for (size_t i = 0; i < input.len; i++)
+			for (size_t i = 0; i < input.size(); i++)
 			{
-				const auto& code = unitsToCodes[input.data[i]];
+				const auto& code = unitsToCodes[input[i]];
 				msg.insert(msg.end(), code.begin(), code.end());
 			}
 			return msg;
