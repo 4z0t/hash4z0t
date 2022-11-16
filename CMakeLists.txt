@@ -28,13 +28,24 @@ add_executable(${CMAKE_PROJECT_NAME}
  "src/FileRegister.h"
 "src/File.h" "src/Compression/shannon_fano.h" "src/Compression/compression.h" "src/Compression/lz77.h")
 
-set( CMAKE_PROJECT_NAME_TEST "${CMAKE_PROJECT_NAME}_Test")
+set( CMAKE_PROJECT_NAME_TEST_SF "${CMAKE_PROJECT_NAME}_TestSF")
 
-add_executable(${CMAKE_PROJECT_NAME_TEST}
+add_executable(${CMAKE_PROJECT_NAME_TEST_SF}
     src/test_compression/sf.cpp
+     "src/Compression/compression.h" "src/Compression/shannon_fano.h")
+
+ set_target_properties(${CMAKE_PROJECT_NAME_TEST_SF} PROPERTIES
+        CXX_STANDARD 17
+        CXX_EXTENSIONS OFF
+        )
+
+        set( CMAKE_PROJECT_NAME_TEST_LZ "${CMAKE_PROJECT_NAME}_TestLZ")
+
+add_executable(${CMAKE_PROJECT_NAME_TEST_LZ}
+    src/test_compression/lz77.cpp
      "src/Compression/compression.h" "src/Compression/lz77.h")
 
- set_target_properties(${CMAKE_PROJECT_NAME_TEST} PROPERTIES
+ set_target_properties(${CMAKE_PROJECT_NAME_TEST_LZ} PROPERTIES
         CXX_STANDARD 17
         CXX_EXTENSIONS OFF
         )
