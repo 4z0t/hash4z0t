@@ -96,7 +96,7 @@ namespace Compression
 				if (_msg.size() == length)//whole msg fits
 				{
 					_matchLength = length;
-					_matchPos = i - length;
+					_matchPos = _window.size() - i;
 					break;
 				}
 
@@ -125,7 +125,7 @@ namespace Compression
 		BytesVector End()
 		{
 			BytesVector out;
-			if (Match())
+			if (_matchLength != 0)
 			{
 				out.push_back(0);
 				out.push_back(_matchLength);
@@ -159,8 +159,8 @@ namespace Compression
 		BytesVector _window;						//sliding window itself
 		const unit _size = SLIDING_WINDOW_SIZE;		//size
 		unit _pos = 0;								//cur window pos
-		unit _matchPos;
-		unit _matchLength;
+		unit _matchPos = 0;
+		unit _matchLength = 0;
 	};
 
 	SlidingWindow::SlidingWindow(unit size) : _size(size)
@@ -202,11 +202,47 @@ namespace Compression
 		}
 
 
+		void ProcessRef(BytesVector& output, unit pos, unit len)
+		{
+			size_t s = output.size();
+			for (unit i = 0; i < len; i++)
+			{
+				output.push_back(output[s - pos + i - 1]);
+			}
+		}
+
+
 
 
 		BytesVector Decompress(const BytesVector& input)
 		{
-			return BytesVector();
+			BytesVector res;
+			bool isRef = false;
+			for (size_t i = 0; i < input.size(); i++)
+			{
+				unit u = input[i];
+				if (u == 0) {
+					if (isRef)
+					{
+						res.push_back(0);
+						isRef = false;
+						continue;
+					}
+					isRef = true;
+					continue;
+				}
+				if (isRef)
+				{
+					i++;
+					unit pos = input[i];
+					ProcessRef(res, pos, u);
+					isRef = false;
+					continue;
+				}
+				res.push_back(u);
+			}
+			return res;
+
 		}
 
 	}

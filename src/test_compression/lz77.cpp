@@ -35,8 +35,8 @@ std::vector<std::string> testCases = {
 	"AABB",
 	"AABBC",
 	"AABBCC",
-	"",
-	"",
+	"ababababababababcabc",
+	"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAB",
 	"",
 	"",
 	"",
@@ -47,7 +47,7 @@ std::vector<std::string> testCases = {
 
 int main(int argc, char* argv[])
 {
-	/*for (auto& s : testCases)
+	for (auto& s : testCases)
 	{
 		if (!TestLZ(s))
 		{
@@ -57,15 +57,6 @@ int main(int argc, char* argv[])
 		{
 			std::cout << "Success compression for \t\"" << s << "\"\n";
 		}
-	}*/
-
-	std::string s = "aaaaaaaaaaa";
-	auto original = Compression::BytesVector(s.begin(), s.end());
-	auto bytes = Compression::LZ77::Compress(original);
-
-	for (uint8_t b : bytes)
-	{
-		std::cout << (char)b << "[" << int(b) << "]\n";
 	}
 
 
