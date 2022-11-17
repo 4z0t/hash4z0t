@@ -6,7 +6,6 @@ namespace Compression
 {
 
 	const unit SLIDING_WINDOW_SIZE = 0xFF;
-	const unit REF_UNIT = 0;
 
 	using InputByteStream = std::istream;
 	using OutputByteStream = std::ostream;
@@ -23,8 +22,6 @@ namespace Compression
 	}
 
 
-
-
 	namespace LZ77
 	{
 
@@ -37,7 +34,12 @@ namespace Compression
 
 			};
 
-			SlidingWindow(unit size) : _size(size)
+			SlidingWindow(unit size, unit ref) : _size(size), REF_UNIT(ref)
+			{
+				_window.reserve(_size);
+			}
+
+			SlidingWindow(unit size) : SlidingWindow(size, 0)
 			{
 				_window.reserve(_size);
 			}
@@ -51,18 +53,17 @@ namespace Compression
 
 			}
 
-
-
 			bool Decode(unit u, BytesVector& out)
 			{
+				if (_isRef && u == 0) //ref symbol and 0
+				{
+					out.push_back(REF_UNIT);
+					PushWindow(REF_UNIT);
+					_isRef = false;
+					return true;
+				}
 				if (u == REF_UNIT) {
-					if (_isRef) //ref symbol twice
-					{
-						out.push_back(REF_UNIT);
-						PushWindow(REF_UNIT);
-						_isRef = false;
-						return true;
-					}
+
 					_isRef = true;
 					return false;
 				}
@@ -101,7 +102,7 @@ namespace Compression
 				else
 				{
 					_msg.pop_back();
-					if (_msg.size() > 2)
+					if (_msg.size() > 3)
 					{
 						//put ref:
 						PushRef(out, prev);
@@ -110,9 +111,9 @@ namespace Compression
 					{
 						for (unit uo : _msg)
 						{
-							if (uo == REF_UNIT)
-								out.push_back(REF_UNIT);
 							out.push_back(uo);
+							if (uo == REF_UNIT)
+								out.push_back(0);
 						}
 
 					}
@@ -123,8 +124,6 @@ namespace Compression
 
 				return out.size() != 0;
 			}
-
-
 
 			BytesVector End()
 			{
@@ -137,12 +136,18 @@ namespace Compression
 				{
 					for (unit uo : _msg)
 					{
-						if (uo == REF_UNIT)
-							out.push_back(REF_UNIT);
+
 						out.push_back(uo);
+						if (uo == REF_UNIT)
+							out.push_back(0);
 					}
 				}
 				return out;
+			}
+
+			void SetRefUnit(unit ref)
+			{
+				REF_UNIT = ref;
 			}
 
 		private:
@@ -193,9 +198,6 @@ namespace Compression
 				return _ref.len != 0;
 			}
 
-
-
-
 			void PushWindow(unit u)
 			{
 				if (_window.size() == _size)
@@ -205,21 +207,19 @@ namespace Compression
 				_window.push_back(u);
 			}
 
-			static void PushRef(BytesVector& out, Ref ref)
+			void PushRef(BytesVector& out, Ref ref)
 			{
 				out.push_back(REF_UNIT);
 				out.push_back(ref.len);
 				out.push_back(ref.offset);
 			}
 
-
-
 			BytesVector _msg;							//message being processed
 			BytesVector _window;						//sliding window itself
 			const unit _size = SLIDING_WINDOW_SIZE;		//size
 			bool _isRef = false;
 			Ref _ref;
-
+			unit REF_UNIT;
 
 		};
 

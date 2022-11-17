@@ -59,6 +59,12 @@ int main(int argc, char* argv[])
 			std::cout << "Success compression for \t\"" << s << "\"\n";
 		}
 	}
-	 
+	/*std::string s = "00000";
+	auto original = Compression::BytesVector(s.begin(), s.end());
+	auto bits = Compression::LZ77::Compress(original);
+	for (auto u : bits)
+	{
+		std::cout << (int)u << std::endl;
+	}*/
 
 }
