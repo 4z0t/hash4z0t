@@ -111,7 +111,7 @@ namespace Compression
 			}
 			PushWindow(u);
 
-			return false;
+			return out.size() != 0;
 		}
 
 
@@ -230,8 +230,8 @@ namespace Compression
 			SlidingWindow window;
 			for (unit u : input)
 			{
-				window.Encode(u, cache);
-				if (cache.size() != 0)
+				;
+				if (window.Encode(u, cache))
 				{
 					res.insert(res.end(), cache.begin(), cache.end());
 					cache.clear();
