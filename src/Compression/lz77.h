@@ -90,6 +90,7 @@ namespace Compression
 
 				Ref prev = _ref;
 				_msg.push_back(u);
+				PushWindow(u);
 
 				if (Match())
 				{
@@ -120,7 +121,6 @@ namespace Compression
 					_msg.clear();
 					_msg.push_back(u);
 				}
-				PushWindow(u);
 
 				return out.size() != 0;
 			}
@@ -155,7 +155,7 @@ namespace Compression
 			{
 				for (unit i = 0; i < _ref.len; i++)
 				{
-					size_t end = _window.size() - 1;
+					size_t end = _window.size();
 					unit u = _window[end - _ref.offset];
 					PushWindow(u);
 					output.push_back(u);
