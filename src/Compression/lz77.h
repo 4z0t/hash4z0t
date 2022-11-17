@@ -38,7 +38,7 @@ namespace Compression
 			{
 				size_t end = _window.size() - 1;
 				unit u = _window[end - _ref.offset];
-				_window.push_back(u);
+				PushWindow(u);
 				output.push_back(u);
 			}
 		}
@@ -49,7 +49,7 @@ namespace Compression
 				if (_isRef) //ref symbol twice
 				{
 					out.push_back(REF_UNIT);
-					_window.push_back(REF_UNIT);
+					PushWindow(REF_UNIT);
 					_isRef = false;
 					return true;
 				}
@@ -69,7 +69,7 @@ namespace Compression
 				_ref.len = 0;
 				return true;
 			}
-			_window.push_back(u);
+			PushWindow(u);
 			out.push_back(u);
 			return true;
 		}

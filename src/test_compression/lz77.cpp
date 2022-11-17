@@ -59,6 +59,6 @@ int main(int argc, char* argv[])
 			std::cout << "Success compression for \t\"" << s << "\"\n";
 		}
 	}
-
+	 
 
 }
