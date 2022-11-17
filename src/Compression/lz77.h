@@ -94,9 +94,7 @@ namespace Compression
 				if (_msg.size() > 2)
 				{
 					//put ref:
-					out.push_back(REF_UNIT);
-					out.push_back(prev.len);
-					out.push_back(prev.offset);
+					PushRef(out, prev);
 				}
 				else
 				{
@@ -160,9 +158,7 @@ namespace Compression
 			BytesVector out;
 			if (_ref.len != 0)
 			{
-				out.push_back(REF_UNIT);
-				out.push_back(_ref.len);
-				out.push_back(_ref.offset);
+				PushRef(out, _ref);
 			}
 			else
 			{
@@ -199,6 +195,13 @@ namespace Compression
 			unit len = 0;
 			unit offset = 0;
 		} _ref;
+
+		static void PushRef(BytesVector& out, Ref ref)
+		{
+			out.push_back(REF_UNIT);
+			out.push_back(ref.len);
+			out.push_back(ref.offset);
+		}
 	};
 
 	SlidingWindow::SlidingWindow(unit size) : _size(size)
