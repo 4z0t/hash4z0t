@@ -31,22 +31,27 @@ namespace Compression
 		class  SlidingWindow
 		{
 		public:
+			struct Ref {
+				unit len = 0;
+				unit offset = 0;
 
+			};
 
-			SlidingWindow();
-			SlidingWindow(unit size);
-			~SlidingWindow();
-
-			void UnpackRef(BytesVector& output)
+			SlidingWindow(unit size) : _size(size)
 			{
-				for (unit i = 0; i < _ref.len; i++)
-				{
-					size_t end = _window.size() - 1;
-					unit u = _window[end - _ref.offset];
-					PushWindow(u);
-					output.push_back(u);
-				}
+				_window.reserve(_size);
 			}
+
+			SlidingWindow() : SlidingWindow(SLIDING_WINDOW_SIZE)
+			{
+			}
+
+			~SlidingWindow()
+			{
+
+			}
+
+
 
 			bool Decode(unit u, BytesVector& out)
 			{
@@ -120,6 +125,38 @@ namespace Compression
 			}
 
 
+
+			BytesVector End()
+			{
+				BytesVector out;
+				if (_ref.len != 0)
+				{
+					PushRef(out, _ref);
+				}
+				else
+				{
+					for (unit uo : _msg)
+					{
+						if (uo == REF_UNIT)
+							out.push_back(REF_UNIT);
+						out.push_back(uo);
+					}
+				}
+				return out;
+			}
+
+		private:
+			void UnpackRef(BytesVector& output)
+			{
+				for (unit i = 0; i < _ref.len; i++)
+				{
+					size_t end = _window.size() - 1;
+					unit u = _window[end - _ref.offset];
+					PushWindow(u);
+					output.push_back(u);
+				}
+			}
+
 			bool Match()
 			{
 				_ref.len = 0;
@@ -158,25 +195,6 @@ namespace Compression
 
 
 
-			BytesVector End()
-			{
-				BytesVector out;
-				if (_ref.len != 0)
-				{
-					PushRef(out, _ref);
-				}
-				else
-				{
-					for (unit uo : _msg)
-					{
-						if (uo == REF_UNIT)
-							out.push_back(REF_UNIT);
-						out.push_back(uo);
-					}
-				}
-				return out;
-			}
-
 
 			void PushWindow(unit u)
 			{
@@ -187,41 +205,24 @@ namespace Compression
 				_window.push_back(u);
 			}
 
-
-
-
-		private:
-
-			BytesVector _msg;							//message being processed
-			BytesVector _window;						//sliding window itself
-			const unit _size = SLIDING_WINDOW_SIZE;		//size
-			bool _isRef = false;
-			struct Ref {
-				unit len = 0;
-				unit offset = 0;
-			} _ref;
-
 			static void PushRef(BytesVector& out, Ref ref)
 			{
 				out.push_back(REF_UNIT);
 				out.push_back(ref.len);
 				out.push_back(ref.offset);
 			}
+
+
+
+			BytesVector _msg;							//message being processed
+			BytesVector _window;						//sliding window itself
+			const unit _size = SLIDING_WINDOW_SIZE;		//size
+			bool _isRef = false;
+			Ref _ref;
+
+
 		};
 
-		SlidingWindow::SlidingWindow(unit size) : _size(size)
-		{
-			_window.reserve(_size);
-		}
-
-		SlidingWindow::SlidingWindow() : SlidingWindow(SLIDING_WINDOW_SIZE)
-		{
-		}
-
-		SlidingWindow::~SlidingWindow()
-		{
-
-		}
 
 		BytesVector Compress(const BytesVector& input)
 		{
