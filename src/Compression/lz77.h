@@ -7,6 +7,9 @@ namespace Compression
 
 	const unit SLIDING_WINDOW_SIZE = 0xFF;
 
+	using InputByteStream = std::istream;
+	using OutputByteStream = std::ostream;
+
 
 	template<typename T>
 	void ShiftLeft(std::vector<T>& vec, size_t shift)
@@ -22,12 +25,55 @@ namespace Compression
 	class  SlidingWindow
 	{
 	public:
+
+
 		SlidingWindow();
 		SlidingWindow(unit size);
 		~SlidingWindow();
 
+		void ProcessRef(BytesVector& output)
+		{
+			for (unit i = 0; i < _ref.len; i++)
+			{
+				size_t end = _window.size() - 1;
+				unit u = _window[end - _ref.offset];
+				_window.push_back(u);
+				output.push_back(u);
+			}
+		}
 
-		bool Next(unit u, BytesVector& out)
+		bool Decode(unit u, BytesVector& out)
+		{
+			if (u == 0) {
+				if (_isRef) //ref symbol twice
+				{
+					out.push_back(0);
+					_window.push_back(0);
+					_isRef = false;
+					return true;
+				}
+				_isRef = true;
+				return false;
+			}
+			if (_isRef)
+			{
+				if (_ref.len == 0)
+				{
+					_ref.len = u;
+					return false;
+				}
+				_ref.offset = u;
+				this->ProcessRef(out);
+				_isRef = false;
+				_ref.len = 0;
+				return true;
+			}
+			_window.push_back(u);
+			out.push_back(u);
+			return true;
+		}
+
+		bool Encode(unit u, BytesVector& out)
 		{
 
 
@@ -141,6 +187,8 @@ namespace Compression
 			_window.push_back(u);
 		}
 
+
+
 	private:
 
 		BytesVector _msg;							//message being processed
@@ -149,6 +197,11 @@ namespace Compression
 		unit _pos = 0;								//cur window pos
 		unit _matchPos = 0;
 		unit _matchLength = 0;
+		bool _isRef = false;
+		struct Ref {
+			unit len = 0;
+			unit offset = 0;
+		} _ref;
 	};
 
 	SlidingWindow::SlidingWindow(unit size) : _size(size)
@@ -177,7 +230,7 @@ namespace Compression
 			SlidingWindow window;
 			for (unit u : input)
 			{
-				window.Next(u, cache);
+				window.Encode(u, cache);
 				if (cache.size() != 0)
 				{
 					res.insert(res.end(), cache.begin(), cache.end());
