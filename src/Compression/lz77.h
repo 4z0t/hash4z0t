@@ -230,7 +230,6 @@ namespace Compression
 			SlidingWindow window;
 			for (unit u : input)
 			{
-				;
 				if (window.Encode(u, cache))
 				{
 					res.insert(res.end(), cache.begin(), cache.end());
