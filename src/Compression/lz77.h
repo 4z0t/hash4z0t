@@ -77,9 +77,7 @@ namespace Compression
 		bool Encode(unit u, BytesVector& out)
 		{
 
-
-			unit prevLength = _matchLength;
-			unit prevPos = _matchPos;
+			Ref prev = _ref;
 			_msg.push_back(u);
 
 			if (Match())
@@ -97,8 +95,8 @@ namespace Compression
 				{
 					//put ref:
 					out.push_back(REF_UNIT);
-					out.push_back(prevLength);
-					out.push_back(prevPos);
+					out.push_back(prev.len);
+					out.push_back(prev.offset);
 				}
 				else
 				{
@@ -121,8 +119,8 @@ namespace Compression
 
 		bool Match()
 		{
-			_matchLength = 0;
-			_matchPos = 0;
+			_ref.len = 0;
+			_ref.offset = 0;
 
 			unit length = 0;
 			unit pos = 0;
@@ -130,8 +128,8 @@ namespace Compression
 			{
 				if (_msg.size() == length)//whole msg fits
 				{
-					_matchLength = length;
-					_matchPos = _window.size() - i;
+					_ref.len = length;
+					_ref.offset = _window.size() - i;
 					break;
 				}
 
@@ -152,7 +150,7 @@ namespace Compression
 				}
 			}
 			//return if we found anything
-			return _matchLength != 0;
+			return _ref.len != 0;
 		}
 
 
@@ -160,11 +158,11 @@ namespace Compression
 		BytesVector End()
 		{
 			BytesVector out;
-			if (_matchLength != 0)
+			if (_ref.len != 0)
 			{
 				out.push_back(REF_UNIT);
-				out.push_back(_matchLength);
-				out.push_back(_matchPos);
+				out.push_back(_ref.len);
+				out.push_back(_ref.offset);
 			}
 			else
 			{
@@ -190,14 +188,12 @@ namespace Compression
 
 
 
+
 	private:
 
 		BytesVector _msg;							//message being processed
 		BytesVector _window;						//sliding window itself
 		const unit _size = SLIDING_WINDOW_SIZE;		//size
-		unit _pos = 0;								//cur window pos
-		unit _matchPos = 0;
-		unit _matchLength = 0;
 		bool _isRef = false;
 		struct Ref {
 			unit len = 0;
