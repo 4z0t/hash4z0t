@@ -6,6 +6,7 @@ namespace Compression
 {
 
 	const unit SLIDING_WINDOW_SIZE = 0xFF;
+	const unit REF_UNIT = 0;
 
 	using InputByteStream = std::istream;
 	using OutputByteStream = std::ostream;
@@ -44,11 +45,11 @@ namespace Compression
 
 		bool Decode(unit u, BytesVector& out)
 		{
-			if (u == 0) {
+			if (u == REF_UNIT) {
 				if (_isRef) //ref symbol twice
 				{
-					out.push_back(0);
-					_window.push_back(0);
+					out.push_back(REF_UNIT);
+					_window.push_back(REF_UNIT);
 					_isRef = false;
 					return true;
 				}
@@ -95,7 +96,7 @@ namespace Compression
 				if (_msg.size() > 2)
 				{
 					//put ref:
-					out.push_back(0);
+					out.push_back(REF_UNIT);
 					out.push_back(prevLength);
 					out.push_back(prevPos);
 				}
@@ -103,8 +104,8 @@ namespace Compression
 				{
 					for (unit uo : _msg)
 					{
-						if (uo == 0)
-							out.push_back(uo);
+						if (uo == REF_UNIT)
+							out.push_back(REF_UNIT);
 						out.push_back(uo);
 					}
 
@@ -161,7 +162,7 @@ namespace Compression
 			BytesVector out;
 			if (_matchLength != 0)
 			{
-				out.push_back(0);
+				out.push_back(REF_UNIT);
 				out.push_back(_matchLength);
 				out.push_back(_matchPos);
 			}
@@ -169,8 +170,8 @@ namespace Compression
 			{
 				for (unit uo : _msg)
 				{
-					if (uo == 0)
-						out.push_back(uo);
+					if (uo == REF_UNIT)
+						out.push_back(REF_UNIT);
 					out.push_back(uo);
 				}
 			}
@@ -243,45 +244,22 @@ namespace Compression
 		}
 
 
-		void ProcessRef(BytesVector& output, unit pos, unit len)
-		{
-			size_t end = output.size() - 1;
-			for (unit i = 0; i < len; i++)
-			{
-				output.push_back(output[end - pos + i]);
-			}
-		}
-
-
 
 
 		BytesVector Decompress(const BytesVector& input)
 		{
 			BytesVector res;
-			bool isRef = false;
+			BytesVector cache;
+			SlidingWindow w;
 			for (size_t i = 0; i < input.size(); i++)
 			{
-				unit u = input[i];
-				if (u == 0) {
-					if (isRef) //ref symbol twice
-					{
-						res.push_back(0);
-						isRef = false;
-						continue;
-					}
-					isRef = true;
-					continue;
-				}
-				if (isRef)
+				if (w.Decode(input[i], cache))
 				{
-					i++;
-					unit pos = input[i];
-					ProcessRef(res, pos, u);
-					isRef = false;
-					continue;
+					res.insert(res.end(), cache.begin(), cache.end());
+					cache.clear();
 				}
-				res.push_back(u);
 			}
+
 			return res;
 
 		}
