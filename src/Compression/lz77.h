@@ -34,7 +34,7 @@ namespace Compression
 
 			};
 
-			SlidingWindow(unit size, unit ref) : _size(size), REF_UNIT(ref)
+			SlidingWindow(unit size, unit ref) : _size(size), _refUnit(ref)
 			{
 				_window.reserve(_size);
 			}
@@ -57,12 +57,12 @@ namespace Compression
 			{
 				if (_isRef && u == 0) //ref symbol and 0
 				{
-					out.push_back(REF_UNIT);
-					PushWindow(REF_UNIT);
+					out.push_back(_refUnit);
+					PushWindow(_refUnit);
 					_isRef = false;
 					return true;
 				}
-				if (u == REF_UNIT) {
+				if (u == _refUnit) {
 
 					_isRef = true;
 					return false;
@@ -113,7 +113,7 @@ namespace Compression
 						for (unit uo : _msg)
 						{
 							out.push_back(uo);
-							if (uo == REF_UNIT)
+							if (uo == _refUnit)
 								out.push_back(0);
 						}
 
@@ -138,7 +138,7 @@ namespace Compression
 					{
 
 						out.push_back(uo);
-						if (uo == REF_UNIT)
+						if (uo == _refUnit)
 							out.push_back(0);
 					}
 				}
@@ -147,7 +147,7 @@ namespace Compression
 
 			void SetRefUnit(unit ref)
 			{
-				REF_UNIT = ref;
+				_refUnit = ref;
 			}
 
 		private:
@@ -209,7 +209,7 @@ namespace Compression
 
 			void PushRef(BytesVector& out, Ref ref)
 			{
-				out.push_back(REF_UNIT);
+				out.push_back(_refUnit);
 				out.push_back(ref.len);
 				out.push_back(ref.offset);
 			}
@@ -219,7 +219,7 @@ namespace Compression
 			const unit _size = SLIDING_WINDOW_SIZE;		//size
 			bool _isRef = false;
 			Ref _ref;
-			unit REF_UNIT;
+			unit _refUnit;
 
 		};
 
@@ -251,9 +251,9 @@ namespace Compression
 			BytesVector res;
 			BytesVector cache;
 			SlidingWindow window;
-			for (size_t i = 0; i < input.size(); i++)
+			for (unit u : input)
 			{
-				if (window.Decode(input[i], cache))
+				if (window.Decode(u, cache))
 				{
 					res.insert(res.end(), cache.begin(), cache.end());
 					cache.clear();

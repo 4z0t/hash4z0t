@@ -3,7 +3,6 @@
 #include "../Compression/lz77.h"
 #include <bitset>
 
-
 bool TestLZ(const std::string& s)
 {
 	auto original = Compression::BytesVector(s.begin(), s.end());
