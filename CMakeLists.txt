@@ -17,16 +17,22 @@ add_library(encoder OBJECT
 
 add_library(decoder OBJECT 
    src/Decoder.h
-    src/Decoder.cpp "src/Compression/shannon_fano.h" "src/Compression/compression.h" "src/Compression/lz77.h")
+    src/Decoder.cpp
+    "src/Compression/shannon_fano.h"
+    "src/Compression/compression.h"
+    "src/Compression/lz77.h")
 
 
 add_executable(${CMAKE_PROJECT_NAME}
 
     src/main.cpp
     src/h4z0t.h
-      
- "src/FileRegister.h"
-"src/File.h" "src/Compression/shannon_fano.h" "src/Compression/compression.h" "src/Compression/lz77.h")
+    src/internalhash4z0t.h
+    src/internalhash4z0t.cpp
+  
+"src/Compression/shannon_fano.h" 
+"src/Compression/compression.h" 
+"src/Compression/lz77.h")
 
 set( CMAKE_PROJECT_NAME_TEST_SF "${CMAKE_PROJECT_NAME}_TestSF")
 
@@ -43,7 +49,8 @@ add_executable(${CMAKE_PROJECT_NAME_TEST_SF}
 
 add_executable(${CMAKE_PROJECT_NAME_TEST_LZ}
     src/test_compression/lz77.cpp
-     "src/Compression/compression.h" "src/Compression/lz77.h")
+     "src/Compression/compression.h"
+     "src/Compression/lz77.h")
 
  set_target_properties(${CMAKE_PROJECT_NAME_TEST_LZ} PROPERTIES
         CXX_STANDARD 17

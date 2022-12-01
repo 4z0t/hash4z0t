@@ -2,8 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include "h4z0t.h"
-#include "FileRegister.h"
-#include "File.h"
 
 
 #define FLAG_PREFIX "--"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "internalhash4z0t.h"
+#include "FileRegister.h"
 #include "File.h"
 namespace H4z0t {
 
@@ -31,7 +32,7 @@ namespace H4z0t {
 
 		void Start(const Path& filesPath)
 		{
-			auto files = FileRegister::GetFileList(filesPath);
+			auto files = GetFileList(filesPath);
 			MakeHeader(files.size());
 			std::cout << files.size() << std::endl;
 			for (auto& f : files)

@@ -5,7 +5,7 @@ namespace H4z0t {
 
 
 
-	namespace FS = std::filesystem;
+	
 	class File
 	{
 

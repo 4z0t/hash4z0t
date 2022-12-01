@@ -7,6 +7,8 @@
 #include <exception>
 #include <locale>
 #include <codecvt>
+#include <vector>
+#include <list>
 #include <iostream>
 
 namespace H4z0t
@@ -49,4 +51,8 @@ namespace H4z0t
 
 
 	};
+
+	using Files = std::list<DirEntry>;
+	Files GetFileList(const Path& path);
+
 }

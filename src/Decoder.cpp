@@ -1,5 +1,4 @@
 #include "Decoder.h"
-#include "Decoder.h"
 namespace H4z0t {
 	Decoder::Decoder()
 	{

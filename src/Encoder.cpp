@@ -1,9 +1,4 @@
 #include "Encoder.h"
-#include "Encoder.h"
-#include "Encoder.h"
-#include "Encoder.h"
-#include "Encoder.h"
-#include "Encoder.h"
 namespace H4z0t {
 
 	Encoder::Encoder()
