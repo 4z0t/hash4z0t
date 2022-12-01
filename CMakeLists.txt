@@ -22,13 +22,18 @@ add_library(decoder OBJECT
     "src/Compression/compression.h"
     "src/Compression/lz77.h")
 
+    
+add_library(internal4z0t OBJECT 
+   src/internalhash4z0t.cpp
+    src/internalhash4z0t.h
+)
+
+
 
 add_executable(${CMAKE_PROJECT_NAME}
 
     src/main.cpp
     src/h4z0t.h
-    src/internalhash4z0t.h
-    src/internalhash4z0t.cpp
   
 "src/Compression/shannon_fano.h" 
 "src/Compression/compression.h" 
@@ -57,7 +62,7 @@ add_executable(${CMAKE_PROJECT_NAME_TEST_LZ}
         CXX_EXTENSIONS OFF
         )
 
-set_target_properties(${CMAKE_PROJECT_NAME} encoder decoder PROPERTIES
+set_target_properties(${CMAKE_PROJECT_NAME} encoder decoder internal4z0t PROPERTIES
             CXX_STANDARD 17
             CXX_EXTENSIONS OFF
             )
@@ -65,5 +70,6 @@ set_target_properties(${CMAKE_PROJECT_NAME} encoder decoder PROPERTIES
 target_link_libraries(${CMAKE_PROJECT_NAME}
     encoder
     decoder
+    internal4z0t
     )
 #set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 17)

@@ -30,37 +30,7 @@ namespace H4z0t {
 		Encoder& WriteString(const char*);
 		Encoder& Put(char c);
 
-		void Start(const Path& filesPath)
-		{
-			auto files = GetFileList(filesPath);
-			MakeHeader(files.size());
-			std::cout << files.size() << std::endl;
-			for (auto& f : files)
-			{
-
-				std::cout << f.path() << std::endl;
-				std::cout << f.path().lexically_relative(filesPath) << std::endl;
-				File file(f.path(), f.path().lexically_relative(filesPath));
-				if (file.Open(true))
-				{
-
-					File::Header h = file.MakeHeader();
-					WriteFileHeader(h);
-					WriteString(file.GetName().u8string());
-					for (uintmax_t i = 0; i < h.dataLen; i++)
-					{
-						Put(file.Get());
-					}
-
-				}
-				else
-				{
-					std::cerr << "Unable to open file " << f.path() << std::endl;
-				}
-
-			}
-
-		}
+		void Start(const Path& filesPath);
 
 
 		~Encoder();

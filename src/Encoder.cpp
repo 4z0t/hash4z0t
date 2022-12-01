@@ -1,4 +1,6 @@
 #include "Encoder.h"
+#include "Encoder.h"
+#include "Encoder.h"
 namespace H4z0t {
 
 	Encoder::Encoder()
@@ -39,7 +41,7 @@ namespace H4z0t {
 
 	}
 
-	inline Encoder::~Encoder()
+	Encoder::~Encoder()
 	{
 
 		assert(this->_outputFile != nullptr, "file wasnt created");
@@ -60,10 +62,42 @@ namespace H4z0t {
 		return *this;
 	}
 
-	inline Encoder& Encoder::Put(char c)
+	Encoder& Encoder::Put(char c)
 	{
 		_outputFile->put(c);
 		return *this;
+	}
+
+	void Encoder::Start(const Path& filesPath)
+	{
+		auto files = GetFileList(filesPath);
+		MakeHeader(files.size());
+		std::cout << files.size() << std::endl;
+		for (auto& f : files)
+		{
+
+			std::cout << f.path() << std::endl;
+			std::cout << f.path().lexically_relative(filesPath) << std::endl;
+			File file(f.path(), f.path().lexically_relative(filesPath));
+			if (file.Open(true))
+			{
+
+				File::Header h = file.MakeHeader();
+				WriteFileHeader(h);
+				WriteString(file.GetName().u8string());
+				for (uintmax_t i = 0; i < h.dataLen; i++)
+				{
+					Put(file.Get());
+				}
+
+			}
+			else
+			{
+				std::cerr << "Unable to open file " << f.path() << std::endl;
+			}
+
+		}
+
 	}
 
 	Encoder& Encoder::WriteString(String s)

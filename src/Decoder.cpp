@@ -20,6 +20,50 @@ namespace H4z0t {
 		_OpenFile(entry);
 	}
 
+	void Decoder::Start(const String& savePath)
+	{
+
+		if (!VerifyFile())
+		{
+			throw InvaildFileException();
+		}
+
+		Path curDir = FS::current_path();
+		if (!savePath.empty())
+		{
+			curDir /= savePath;
+		}
+		u32 filesCount = FilesCount();
+
+
+		for (u32 i = 0; i < filesCount; i++)
+		{
+			File::Header h = Read<File::Header>();
+			std::string name = ReadString(h.nameLen);
+			File file(curDir / name);
+			FS::create_directories((curDir / name).parent_path());
+			if (file.Open(false))
+			{
+				std::cout << "File opened\t" << name << std::endl;
+				for (uintmax_t i = 0; i < h.dataLen; i++)
+				{
+					file.Put(Read<char>());
+				}
+			}
+			else
+			{
+
+				std::cout << "File not opened " << name << std::endl;
+				throw CantOpenFileException(name.c_str());
+			}
+
+
+		}
+
+
+
+	}
+
 	void Decoder::_OpenFile(Path path)
 	{
 		this->_inputFile = new std::fstream();
@@ -27,7 +71,7 @@ namespace H4z0t {
 		if (!this->_inputFile->is_open())throw std::exception("CANT OPEN FILE");
 	}
 
-	inline String Decoder::ReadString(u32 len)
+     String Decoder::ReadString(u32 len)
 	{
 		std::stringstream ss;
 		for (u32 i = 0; i < len; i++)
@@ -35,7 +79,7 @@ namespace H4z0t {
 		return ss.str();
 	}
 
-	inline Decoder::~Decoder()
+	Decoder::~Decoder()
 	{
 
 		assert(this->_inputFile != nullptr, "file wasnt created");
