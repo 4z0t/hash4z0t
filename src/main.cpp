@@ -67,44 +67,20 @@ int main(int argc, char* argv[])
 				else
 					std::cout << "\t" << argv[i] << "\n";
 			}
-			Decoder decoder{ std::string(argv[2]) };
-			if (!decoder.VerifyFormat())
+			try
 			{
-				std::cout << "File is not an encoded one" << std::endl;
-				return 0;
+				Decoder decoder{ std::string(argv[2]) };
+				decoder.Start(savePath);
 			}
-			if (!decoder.VerifyVersion())
+			catch (const H4z0t::CantOpenFileException& e)
 			{
-				std::cout << "File has incorrect version of format" << std::endl;
-				return 0;
+				std::cerr << "Unable to open file " << e.what();
+				return 1;
 			}
-			u32 n = decoder.Read<u32>();
-			std::cout << savePath << std::endl;
-			auto curDir = std::filesystem::current_path();
-			if (!savePath.empty())
-				curDir /= savePath;
-			for (u32 i = 0; i < n; i++)
+			catch (const H4z0t::InvaildFileException& e)
 			{
-				File::Header h = decoder.Read<File::Header>();
-				std::string name = decoder.ReadString(h.nameLen);
-				File file(curDir / name);
-				std::filesystem::create_directories((curDir / name).parent_path());
-				if (file.Open(false))
-				{
-					std::cout << "File opened\t" << name << std::endl;
-					for (uintmax_t i = 0; i < h.dataLen; i++)
-					{
-						file.Put(decoder.Read<char>());
-					}
-				}
-				else
-				{
-
-					std::cout << "File not opened " << name << std::endl;
-					return 0;
-				}
-
-
+				std::cerr << "Given file is invilid";
+				return 1;
 			}
 
 

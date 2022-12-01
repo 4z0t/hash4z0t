@@ -6,7 +6,7 @@ namespace H4z0t {
 
 
 	class InvaildFileException : public std::exception {};
-	class CantOpenFileException : public std::exception {};
+	class CantOpenFileException : public std::exception { public: using std::exception::exception; };
 
 
 	class Decoder
@@ -60,7 +60,7 @@ namespace H4z0t {
 				{
 
 					std::cout << "File not opened " << name << std::endl;
-					throw CantOpenFileException();
+					throw CantOpenFileException(name.c_str());
 				}
 
 
