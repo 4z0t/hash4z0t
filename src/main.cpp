@@ -29,23 +29,8 @@ int main(int argc, char* argv[])
 {
 	if (argc < 3)
 	{
-#if _DEBUG 
-		std::cout << "Encoding: \n";
-		Encoder encoder;
-		encoder.MakeHeader();
-		auto s = "C:\\Users\\gaste\\Downloads\\";
-		auto files = FileRegister::GetFileList(s);
-		for (auto& f : files)
-		{
 
-			std::cout << f.path() << std::endl;
-			std::cout << f.path().lexically_relative(s) << std::endl;
-			File file(f.path(), f.path().lexically_relative(s));
-			encoder.WriteFileHeader(file.MakeHeader());
-		}
-#elif
 		std::cout << "Not enough arguments";
-#endif
 	}
 	else
 	{
@@ -92,35 +77,19 @@ int main(int argc, char* argv[])
 			{
 				std::cout << "\t" << argv[i] << "\n";
 			}
-			Encoder encoder;
 
-			auto files = FileRegister::GetFileList(argv[2]);
-			encoder.MakeHeader(files.size());
-			std::cout << files.size() << std::endl;
-			for (auto& f : files)
+			try
 			{
 
-				std::cout << f.path() << std::endl;
-				std::cout << f.path().lexically_relative(argv[2]) << std::endl;
-				File file(f.path(), f.path().lexically_relative(argv[2]));
-				if (file.Open(true))
-				{
+				Encoder encoder;
 
-					File::Header h = file.MakeHeader();
-					encoder.WriteFileHeader(h);
-					encoder.WriteString(file.GetName().u8string());
-					for (uintmax_t i = 0; i < h.dataLen; i++)
-					{
-						encoder.Put(file.Get());
-					}
-
-				}
-				else
-				{
-					std::cout << "Unable to open file " << f.path() << std::endl;
-				}
-
+				encoder.Start(argv[2]);
 			}
+			catch (std::exception)
+			{
+				return 1;
+			}
+
 
 
 		}
