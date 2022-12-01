@@ -1,19 +1,18 @@
 #pragma once
 #include "internalhash4z0t.h"
+#include "File.h"
 #include <sstream>
 namespace H4z0t {
 
 
 	class InvaildFileException : public std::exception {};
-
+	class CantOpenFileException : public std::exception {};
 
 
 	class Decoder
 	{
 	public:
-		using String = std::string;
-		using Path = std::filesystem::path;
-		using DirEntry = std::filesystem::directory_entry;
+
 
 
 		Decoder();
@@ -27,29 +26,68 @@ namespace H4z0t {
 			return VerifyFormat() && VerifyVersion();
 		}
 
-		void Start()
+		void Start(const String& savePath)
 		{
+
 			if (!VerifyFile())
 			{
 				throw InvaildFileException();
 			}
+
+			Path curDir = FS::current_path();
+			if (!savePath.empty())
+			{
+				curDir /= savePath;
+			}
+			u32 filesCount = FilesCount();
+
+
+			for (u32 i = 0; i < filesCount; i++)
+			{
+				File::Header h = Read<File::Header>();
+				std::string name = ReadString(h.nameLen);
+				File file(curDir / name);
+				FS::create_directories((curDir / name).parent_path());
+				if (file.Open(false))
+				{
+					std::cout << "File opened\t" << name << std::endl;
+					for (uintmax_t i = 0; i < h.dataLen; i++)
+					{
+						file.Put(Read<char>());
+					}
+				}
+				else
+				{
+
+					std::cout << "File not opened " << name << std::endl;
+					throw CantOpenFileException();
+				}
+
+
+			}
+
 
 
 		}
 
 
 
+
+
+
+
 		template<typename T>
 		T Read();
+		String ReadString(u32 len);
 
-
-
-		std::string ReadString(u32 len);
 
 		~Decoder();
-
 	protected:
 
+		u32 FilesCount()
+		{
+			return Read<u32>();
+		}
 		bool VerifyFormat();
 		bool VerifyVersion();
 		void _OpenFile(Path);

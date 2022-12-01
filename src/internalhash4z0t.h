@@ -7,13 +7,14 @@
 #include <exception>
 #include <locale>
 #include <codecvt>
-
+#include <iostream>
 
 namespace H4z0t
 {
+	namespace FS = std::filesystem;
 	using String = std::string;
-	using Path = std::filesystem::path;
-	using DirEntry = std::filesystem::directory_entry;
+	using Path = FS::path;
+	using DirEntry = FS::directory_entry;
 
 	typedef uint32_t u32;
 	enum class DataType
