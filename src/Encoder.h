@@ -9,9 +9,9 @@ namespace H4z0t {
 	{
 	public:
 		Encoder();
-		Encoder(std::string);
-		Encoder(std::filesystem::path);
-		Encoder(std::filesystem::directory_entry);
+		Encoder(String);
+		Encoder(Path);
+		Encoder(DirEntry);
 
 
 		void _OpenFile();
@@ -22,28 +22,18 @@ namespace H4z0t {
 		template<typename T>
 		Encoder& Write(T value);
 
-		~Encoder()
-		{
-
-			assert(this->_outputFile != nullptr, "file wasnt created");
-			if (this->_outputFile->is_open())this->_outputFile->close();
-			delete this->_outputFile;
-		}
 
 		Encoder& WriteFileHeader(File::Header h);
 
-		Encoder& WriteString(std::string);
+		Encoder& WriteString(String);
 		Encoder& WriteString(const char*);
-		Encoder& Put(char c)
-		{
-			_outputFile->put(c);
-			return *this;
-		}
+		Encoder& Put(char c);
+		~Encoder();
 
 	protected:
 		std::fstream* _outputFile = nullptr;
 
-		std::filesystem::path _workPath;
+		Path _workPath;
 
 
 

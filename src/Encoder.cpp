@@ -1,5 +1,9 @@
 #include "Encoder.h"
 #include "Encoder.h"
+#include "Encoder.h"
+#include "Encoder.h"
+#include "Encoder.h"
+#include "Encoder.h"
 namespace H4z0t {
 
 	Encoder::Encoder()
@@ -7,17 +11,17 @@ namespace H4z0t {
 		_OpenFile();
 	}
 
-	Encoder::Encoder(std::string)
+	Encoder::Encoder(String)
 	{
 		_OpenFile();
 	}
 
-	Encoder::Encoder(std::filesystem::path)
+	Encoder::Encoder(Path)
 	{
 		_OpenFile();
 	}
 
-	Encoder::Encoder(std::filesystem::directory_entry)
+	Encoder::Encoder(DirEntry)
 	{
 		_OpenFile();
 	}
@@ -25,7 +29,7 @@ namespace H4z0t {
 	void Encoder::_OpenFile()
 	{
 		this->_outputFile = new std::fstream();
-		this->_outputFile->open(std::string(DEFAULT_OUTPUT_PATH), std::ios::binary | std::ios::out);
+		this->_outputFile->open(String(DEFAULT_OUTPUT_PATH), std::ios::binary | std::ios::out);
 
 		if (!this->_outputFile->is_open())throw std::exception("CANT OPEN FILE");
 		//this->_outputFile->imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
@@ -38,6 +42,14 @@ namespace H4z0t {
 		this->_outputFile->write(FMT_HEADER_, strlen(FMT_HEADER_))
 			.write(reinterpret_cast<const char*>(&FMT_VERSION), sizeof(FMT_VERSION));
 
+	}
+
+	inline Encoder::~Encoder()
+	{
+
+		assert(this->_outputFile != nullptr, "file wasnt created");
+		if (this->_outputFile->is_open())this->_outputFile->close();
+		delete this->_outputFile;
 	}
 
 	Encoder& Encoder::WriteFileHeader(File::Header h)
@@ -53,7 +65,13 @@ namespace H4z0t {
 		return *this;
 	}
 
-	Encoder& Encoder::WriteString(std::string s)
+	inline Encoder& Encoder::Put(char c)
+	{
+		_outputFile->put(c);
+		return *this;
+	}
+
+	Encoder& Encoder::WriteString(String s)
 	{
 
 		this->_outputFile->write(s.c_str(), s.length());
