@@ -2,52 +2,71 @@
 #include "internalhash4z0t.h"
 #include <sstream>
 namespace H4z0t {
+
+
+	class InvaildFileException : public std::exception {};
+
+
+
 	class Decoder
 	{
 	public:
+		using String = std::string;
 		using Path = std::filesystem::path;
+		using DirEntry = std::filesystem::directory_entry;
+
+
 		Decoder();
-		Decoder(std::string);
-
+		Decoder(String);
 		Decoder(Path);
-		Decoder(std::filesystem::directory_entry);
+		Decoder(DirEntry);
 
-		bool VerifyFormat();
-		bool VerifyVersion();
+
+		bool VerifyFile()
+		{
+			return VerifyFormat() && VerifyVersion();
+		}
+
+		void Start()
+		{
+			if (!VerifyFile())
+			{
+				throw InvaildFileException();
+			}
+
+
+		}
+
 
 
 		template<typename T>
-		T Read()
-		{
-			T res;
-			this->_inputFile->read(reinterpret_cast<char*>(&res), sizeof(T));
-			return res;
-		}
+		T Read();
 
 
-		void _OpenFile(Path);
 
-		std::string ReadString(u32 len)
-		{
-			std::stringstream ss;
-			for (u32 i = 0; i < len; i++)
-				ss.put(this->_inputFile->get());
-			return ss.str();
-		}
+		std::string ReadString(u32 len);
 
-		~Decoder()
-		{
-
-			assert(this->_inputFile != nullptr, "file wasnt created");
-			if (this->_inputFile->is_open())this->_inputFile->close();
-			delete this->_inputFile;
-		}
+		~Decoder();
 
 	protected:
-		std::fstream* _inputFile = nullptr;
+
+		bool VerifyFormat();
+		bool VerifyVersion();
+		void _OpenFile(Path);
+
 
 		Path _filePath;
+		std::fstream* _inputFile = nullptr;
+
 	};
 
+
+	template<typename T>
+	inline T Decoder::Read()
+	{
+		T res;
+		this->_inputFile->read(reinterpret_cast<char*>(&res), sizeof(T));
+		return res;
+	}
 
 }

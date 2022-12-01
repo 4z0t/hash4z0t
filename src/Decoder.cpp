@@ -6,7 +6,7 @@ namespace H4z0t {
 		_OpenFile(std::filesystem::current_path());
 	}
 
-	Decoder::Decoder(std::string s)
+	Decoder::Decoder(String s)
 	{
 		_OpenFile(Path(s));
 	}
@@ -16,7 +16,7 @@ namespace H4z0t {
 		_OpenFile(path);
 	}
 
-	Decoder::Decoder(std::filesystem::directory_entry entry)
+	Decoder::Decoder(DirEntry entry)
 	{
 		_OpenFile(entry);
 	}
@@ -26,6 +26,22 @@ namespace H4z0t {
 		this->_inputFile = new std::fstream();
 		this->_inputFile->open(path, std::ios::binary | std::ios::in);
 		if (!this->_inputFile->is_open())throw std::exception("CANT OPEN FILE");
+	}
+
+	inline String Decoder::ReadString(u32 len)
+	{
+		std::stringstream ss;
+		for (u32 i = 0; i < len; i++)
+			ss.put(this->_inputFile->get());
+		return ss.str();
+	}
+
+	inline Decoder::~Decoder()
+	{
+
+		assert(this->_inputFile != nullptr, "file wasnt created");
+		if (this->_inputFile->is_open())this->_inputFile->close();
+		delete this->_inputFile;
 	}
 
 	bool Decoder::VerifyFormat()

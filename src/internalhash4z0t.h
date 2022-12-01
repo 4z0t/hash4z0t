@@ -9,36 +9,43 @@
 #include <codecvt>
 
 
-typedef uint32_t u32;
-enum class DataType
+namespace H4z0t
 {
-	Folder,
-	File
-};
+	using String = std::string;
+	using Path = std::filesystem::path;
+	using DirEntry = std::filesystem::directory_entry;
 
-enum class CompressionType:u32
-{
-	None
-};
+	typedef uint32_t u32;
+	enum class DataType
+	{
+		Folder,
+		File
+	};
 
-enum class EncryptionType :u32
-{
-	None
-};
+	enum class CompressionType :u32
+	{
+		None
+	};
 
-enum class ProtecionType :u32
-{
-	None
-};
+	enum class EncryptionType :u32
+	{
+		None
+	};
+
+	enum class ProtecionType :u32
+	{
+		None
+	};
 
 
-const u32 FMT_VERSION = 1;
+	const u32 FMT_VERSION = 1;
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
 
 
-struct Header
-{
-	
+	struct Header
+	{
 
-};
+
+	};
+}
