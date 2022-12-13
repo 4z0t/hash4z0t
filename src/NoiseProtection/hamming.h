@@ -1,3 +1,4 @@
+
 #pragma once
 #include "../Chunk.h"
 #include "../internalhash4z0t.h"
@@ -7,8 +8,13 @@
 #include <iostream>
 #include "../BitsAndBytes/BitsAndBytes.h"
 
-
-namespace Compression
+namespace Protection
 {
 	using namespace BitsAndBytes;
+
+
+	namespace Hamming
+	{
+		
+	}
 }

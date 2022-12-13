@@ -17,7 +17,7 @@ namespace H4z0t {
 			u32 nameLen;
 			CompressionType comp = CompressionType::None;
 			EncryptionType enc = EncryptionType::None;
-			ProtecionType prot = ProtecionType::None;
+			ProtectionType prot = ProtectionType::None;
 		};
 
 		File(const Path& path, const Path& relative) :_path(path), _relative(relative)

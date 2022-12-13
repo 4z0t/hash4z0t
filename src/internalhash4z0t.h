@@ -35,7 +35,7 @@ namespace H4z0t
 		None
 	};
 
-	enum class ProtecionType :u32
+	enum class ProtectionType :u32
 	{
 		None
 	};
@@ -54,5 +54,8 @@ namespace H4z0t
 
 	using Files = std::list<DirEntry>;
 	Files GetFileList(const Path& path);
+
+
+
 
 }
