@@ -84,4 +84,21 @@ namespace BitsAndBytes
 
 		return res;
 	}
+
+
+
+}
+
+std::ostream& operator<<(std::ostream& out, const BitsAndBytes::BitsVector& v)
+{
+	for (size_t i = 0; i < v.size(); i++)
+	{
+		if (i % 8 == 0 && i != 0)
+		{
+			out << '.';
+		}
+		out << (int)v[i];
+	}
+	return out;
+
 }
