@@ -46,9 +46,9 @@ namespace H4z0t
 		Mode mode = Mode::None;
 		vector<Path> targets;
 		Path savePath;
-		CompressionType compression = CompressionType::None;;
+		CompressionType compression = CompressionType::None;
 		ProtectionType protection = ProtectionType::None;
-		EncryptionType encryption = EncryptionType::None;;
+		EncryptionType encryption = EncryptionType::None;
 	};
 
 
@@ -160,7 +160,16 @@ namespace H4z0t
 					break;
 				}
 			}
+
+
+			CheckArgs(args);
 			return args;
+		}
+
+		void CheckArgs(Arguments& args)
+		{
+			if (args.savePath.empty())args.savePath = Path(DEFAULT_OUTPUT_PATH);
+			if (args.targets.empty())args.mode = Mode::IncorrectArguments;
 		}
 
 
