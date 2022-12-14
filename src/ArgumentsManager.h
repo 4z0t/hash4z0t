@@ -55,9 +55,9 @@ namespace H4z0t
 	class ArgumentsManager
 	{
 	public:
-		ArgumentsManager() {};
+		ArgumentsManager() = delete;
 
-		Arguments Process(int argc, const char** argv)
+		static Arguments Process(int argc, const char** argv)
 		{
 			Arguments args;
 
@@ -165,17 +165,13 @@ namespace H4z0t
 			CheckArgs(args);
 			return args;
 		}
-
-		void CheckArgs(Arguments& args)
+		~ArgumentsManager() {};
+	private:
+		static void CheckArgs(Arguments& args)
 		{
 			if (args.savePath.empty())args.savePath = Path(DEFAULT_OUTPUT_PATH);
 			if (args.targets.empty())args.mode = Mode::IncorrectArguments;
 		}
-
-
-		~ArgumentsManager() {};
-	private:
-
 	};
 
 

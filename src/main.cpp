@@ -4,13 +4,13 @@
 #include "h4z0t.h"
 
 
-#define FLAG_PREFIX "--"
+#define ARG_PREFIX "--"
 
 #define ENCODE_ "encode"
 #define DECODE_ "decode"
 
-#define DECODE_FLAG (FLAG_PREFIX DECODE_)
-#define ENCODE_FLAG (FLAG_PREFIX ENCODE_)
+#define DECODE_FLAG (ARG_PREFIX DECODE_)
+#define ENCODE_FLAG (ARG_PREFIX ENCODE_)
 
 #define is_decode(s) (strcmp((s), DECODE_FLAG) == 0)
 #define is_encode(s) (strcmp((s), ENCODE_FLAG) == 0)
