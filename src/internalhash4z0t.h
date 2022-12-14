@@ -27,7 +27,10 @@ namespace H4z0t
 
 	enum class CompressionType :u32
 	{
-		None
+		None,
+		SF,
+		LZ77
+
 	};
 
 	enum class EncryptionType :u32
@@ -37,7 +40,8 @@ namespace H4z0t
 
 	enum class ProtectionType :u32
 	{
-		None
+		None,
+		Hamming,
 	};
 
 
