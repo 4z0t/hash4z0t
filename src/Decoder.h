@@ -58,7 +58,7 @@ namespace H4z0t {
 
 
 	template<typename T>
-	inline T Decoder::Read()
+	T Decoder::Read()
 	{
 		T res;
 		this->_inputFile->read(reinterpret_cast<char*>(&res), sizeof(T));

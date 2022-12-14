@@ -1,11 +1,12 @@
 #pragma once
 #include "internalhash4z0t.h"
+#include <sstream>
 
 namespace H4z0t {
 
 
 
-	
+
 	class File
 	{
 
@@ -20,15 +21,9 @@ namespace H4z0t {
 			ProtectionType prot = ProtectionType::None;
 		};
 
-		File(const Path& path, const Path& relative) :_path(path), _relative(relative)
-		{
+		File(const Path& path, const Path& relative) :_path(path), _relative(relative) {}
 
-		}
-
-		File(const Path& path) :_path(path), _relative()
-		{
-
-		}
+		File(const Path& path) :_path(path), _relative() {}
 
 
 		Header	MakeHeader()
@@ -53,7 +48,6 @@ namespace H4z0t {
 			if (_file->is_open())
 			{
 				return true;
-
 			}
 			else
 			{
@@ -63,23 +57,55 @@ namespace H4z0t {
 			}
 		}
 
-		char Get()
+		inline char Get()
 		{
 			assert(_file != nullptr);
 			return _file->get();
 		}
 
-		void Put(char c)
+		inline void Put(char c)
 		{
 			assert(_file != nullptr);
 			_file->put(c);
+		}
+
+		template<typename T>
+		void Write(const T& value)
+		{
+			_file->write(reinterpret_cast<const char*>(&value), sizeof(T));
+		}
+
+		template<>
+		void Write(const String& s)
+		{
+			_file->write(s.c_str(), s.length());
+		}
+
+
+		template<typename T>
+		T Read()
+		{
+			T res;
+			_file->read(reinterpret_cast<char*>(&res), sizeof(T));
+			return res;
+		}
+
+
+
+		String ReadString(size_t len)
+		{
+			std::stringstream ss;
+			for (size_t i = 0; i < len; i++)
+				ss.put(Get());
+			return ss.str();
 		}
 
 		~File()
 		{
 			if (_file != nullptr)
 			{
-				_file->close();
+				if (_file->is_open())
+					_file->close();
 				delete _file;
 			}
 		}
