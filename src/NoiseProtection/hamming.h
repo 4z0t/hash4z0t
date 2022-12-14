@@ -18,6 +18,33 @@ namespace Protection
 		return ((size_t)1) << n;
 	}
 
+#define POW2CASE(n) case Pow2(n)-1: return (n)
+
+
+	constexpr size_t IsPow2m1(size_t n)
+	{
+		switch (n)
+		{
+			POW2CASE(1);
+			POW2CASE(2);
+			POW2CASE(3);
+			POW2CASE(4);
+			POW2CASE(5);
+			POW2CASE(6);
+			POW2CASE(7);
+			POW2CASE(8);
+			POW2CASE(9);
+			POW2CASE(10);
+			POW2CASE(11);
+			POW2CASE(12);
+			POW2CASE(13);
+			POW2CASE(14);
+		default:
+			return 0;
+		}
+	}
+#undef POW2CASE
+
 	namespace Hamming
 	{
 
@@ -55,22 +82,21 @@ namespace Protection
 		}
 
 
+
+
 		bool CalculateCheckBit(const BitsVector& block, size_t position)
 		{
 			size_t check = 0;
 			size_t i = position - 1;
-			size_t j;
 			while (i < block.size())
 			{
-				for (j = i; j < i + position; j++)
+				for (size_t j = i; j < i + position; j++)
 				{
-					if (block[j] && CheckBlockLength(j) == 0)check++;
+					if (block[j] && IsPow2m1(j) == 0)check++;
 				}
 				i += 2 * position;
 			}
 			return check % 2 != 0;
-
-
 		}
 
 
@@ -87,19 +113,19 @@ namespace Protection
 
 					if (i == (Pow2(k) - 1)) {
 						k++;
+						continue;
+					}
+
+					if (j == msg.size())
+					{
+						output[i] = 0;
 					}
 					else
 					{
-						if (j == msg.size())
-						{
-							output[i] = 0;
-						}
-						else
-						{
-							output[i] = msg[j];
-							j++;
-						}
+						output[i] = msg[j];
+						j++;
 					}
+
 				}
 			}
 

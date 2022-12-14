@@ -55,4 +55,5 @@ int main(int argc, char* argv[])
 	{
 		cout << Protection::Hamming::FindFlip(bits) << endl;
 	}
+
 }
