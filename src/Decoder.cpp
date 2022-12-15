@@ -20,6 +20,15 @@ namespace H4z0t {
 		_OpenFile(entry);
 	}
 
+	Decoder::Decoder(const Path& path, const Arguments& args)
+	{
+		_OpenFile(path);
+		compression = args.compression;
+		protection = args.protection;
+		encryption = args.encryption;
+	}
+
+
 	void Decoder::Start(const Path& savePath)
 	{
 

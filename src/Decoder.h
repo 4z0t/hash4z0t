@@ -5,7 +5,7 @@
 namespace H4z0t {
 
 
-	
+
 
 
 	class Decoder
@@ -18,7 +18,7 @@ namespace H4z0t {
 		Decoder(String);
 		Decoder(Path);
 		Decoder(DirEntry);
-		Decoder(const Arguments& args);
+		Decoder(const Path& path, const Arguments& args);
 
 
 		bool VerifyFile()
@@ -44,6 +44,9 @@ namespace H4z0t {
 
 		Path _filePath;
 		File _inputFile;
+		CompressionType compression = CompressionType::None;
+		ProtectionType protection = ProtectionType::None;
+		EncryptionType encryption = EncryptionType::None;
 
 	};
 }

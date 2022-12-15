@@ -13,6 +13,7 @@ namespace H4z0t {
 		Encoder(const String&);
 		Encoder(const Path&);
 		Encoder(const DirEntry&);
+		Encoder(const Arguments& args);
 
 
 		void _OpenFile(const Path&);
@@ -33,5 +34,9 @@ namespace H4z0t {
 	protected:
 		File _outputFile;
 		Path _workPath;
+		CompressionType compression = CompressionType::None;
+		ProtectionType protection = ProtectionType::None;
+		EncryptionType encryption = EncryptionType::None;
+
 	};
 }

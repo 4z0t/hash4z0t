@@ -23,6 +23,15 @@ namespace H4z0t {
 		_OpenFile(dir_entry);
 	}
 
+	Encoder::Encoder(const Arguments& args)
+	{
+		_OpenFile(args.savePath);
+
+		compression = args.compression;
+		protection = args.protection;
+		encryption = args.encryption;
+	}
+
 	void Encoder::_OpenFile(const Path& path)
 	{
 		if (!_outputFile.Open(false, path))
