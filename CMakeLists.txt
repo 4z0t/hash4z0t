@@ -84,4 +84,3 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     decoder
     internal4z0t
     )
-#set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 17)

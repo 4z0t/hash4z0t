@@ -71,7 +71,7 @@ namespace H4z0t {
 		if (!this->_inputFile->is_open())throw std::exception("CANT OPEN FILE");
 	}
 
-     String Decoder::ReadString(u32 len)
+	String Decoder::ReadString(u32 len)
 	{
 		std::stringstream ss;
 		for (u32 i = 0; i < len; i++)

@@ -12,7 +12,7 @@ namespace H4z0t {
 
 
 	public:
-		static struct Header
+		struct Header
 		{
 			uintmax_t dataLen;
 			u32 nameLen;
@@ -102,12 +102,11 @@ namespace H4z0t {
 
 		~File()
 		{
-			if (_file != nullptr)
-			{
-				if (_file->is_open())
-					_file->close();
-				delete _file;
-			}
+			if (_file == nullptr)return;
+			if (_file->is_open())
+				_file->close();
+			delete _file;
+
 		}
 
 
