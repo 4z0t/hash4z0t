@@ -17,6 +17,7 @@ namespace H4z0t
 		void Collect(const Path& path)
 		{
 			File file(path);
+			if(!file.Open(true)) throw CantOpenFileException(path.u8string().c_str());
 
 			for (size_t i = 0; i < file.GetSize(); i++)
 			{
