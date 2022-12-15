@@ -20,6 +20,7 @@ namespace H4z0t {
 			EncryptionType enc = EncryptionType::None;
 			ProtectionType prot = ProtectionType::None;
 		};
+		File() {}
 
 		File(const Path& path, const Path& relative) :_path(path), _relative(relative) {}
 
@@ -37,6 +38,14 @@ namespace H4z0t {
 		Path GetName()
 		{
 			return _relative;
+		}
+
+
+
+		bool Open(bool read, const Path& path)
+		{
+			_path = path;
+			return Open(read);
 		}
 
 		bool Open(bool read)
@@ -74,6 +83,12 @@ namespace H4z0t {
 		{
 			assert(_file != nullptr);
 			_file->write(reinterpret_cast<const char*>(&value), sizeof(T));
+		}
+
+		void Write(const char* str, size_t len)
+		{
+			assert(_file != nullptr);
+			_file->write(str, len);
 		}
 
 		template<>

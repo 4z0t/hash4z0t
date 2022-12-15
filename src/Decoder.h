@@ -30,21 +30,12 @@ namespace H4z0t {
 
 
 
-
-
-
-
-		template<typename T>
-		T Read();
-		String ReadString(u32 len);
-
-
 		~Decoder();
 	protected:
 
 		u32 FilesCount()
 		{
-			return Read<u32>();
+			return _inputFile.Read<u32>();
 		}
 		bool VerifyFormat();
 		bool VerifyVersion();
@@ -52,17 +43,7 @@ namespace H4z0t {
 
 
 		Path _filePath;
-		std::fstream* _inputFile = nullptr;
+		File _inputFile;
 
 	};
-
-
-	template<typename T>
-	T Decoder::Read()
-	{
-		T res;
-		this->_inputFile->read(reinterpret_cast<char*>(&res), sizeof(T));
-		return res;
-	}
-
 }

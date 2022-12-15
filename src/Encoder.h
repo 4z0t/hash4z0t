@@ -10,25 +10,20 @@ namespace H4z0t {
 	{
 	public:
 		Encoder();
-		Encoder(String);
-		Encoder(Path);
-		Encoder(DirEntry);
+		Encoder(const String&);
+		Encoder(const Path&);
+		Encoder(const DirEntry&);
 
 
-		void _OpenFile();
+		void _OpenFile(const Path&);
 
 		void MakeHeader();
 		void MakeHeader(u32 fileCount);
 
-		template<typename T>
-		Encoder& Write(T value);
+
+		void WriteFileHeader(File::Header h);
 
 
-		Encoder& WriteFileHeader(File::Header h);
-
-		Encoder& WriteString(String);
-		Encoder& WriteString(const char*);
-		Encoder& Put(char c);
 
 		void Start(const Path& filesPath);
 
@@ -36,13 +31,7 @@ namespace H4z0t {
 		~Encoder();
 
 	protected:
-		std::fstream* _outputFile = nullptr;
-
+		File _outputFile;
 		Path _workPath;
-
-
-
 	};
-
-
 }

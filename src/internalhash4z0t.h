@@ -18,6 +18,10 @@ namespace H4z0t
 	using Path = FS::path;
 	using DirEntry = FS::directory_entry;
 
+
+	class InvaildFileException : public std::exception {};
+	class CantOpenFileException : public std::exception { public: using std::exception::exception; };
+
 	typedef uint32_t u32;
 	enum class DataType
 	{

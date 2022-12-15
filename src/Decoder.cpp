@@ -38,8 +38,8 @@ namespace H4z0t {
 
 		for (u32 i = 0; i < filesCount; i++)
 		{
-			File::Header h = Read<File::Header>();
-			std::string name = ReadString(h.nameLen);
+			File::Header h = _inputFile.Read<File::Header>();
+			std::string name = _inputFile.ReadString(h.nameLen);
 			File file(curDir / name);
 			FS::create_directories((curDir / name).parent_path());
 			if (file.Open(false))
@@ -47,7 +47,7 @@ namespace H4z0t {
 				std::cout << "File opened\t" << name << std::endl;
 				for (uintmax_t i = 0; i < h.dataLen; i++)
 				{
-					file.Put(Read<char>());
+					file.Put(_inputFile.Read<char>());
 				}
 			}
 			else
@@ -66,26 +66,14 @@ namespace H4z0t {
 
 	void Decoder::_OpenFile(Path path)
 	{
-		this->_inputFile = new std::fstream();
-		this->_inputFile->open(path, std::ios::binary | std::ios::in);
-		if (!this->_inputFile->is_open())throw std::exception("CANT OPEN FILE");
+		if (!_inputFile.Open(true, path))
+			throw CantOpenFileException(path.u8string().c_str());
+
 	}
 
-	String Decoder::ReadString(u32 len)
-	{
-		std::stringstream ss;
-		for (u32 i = 0; i < len; i++)
-			ss.put(this->_inputFile->get());
-		return ss.str();
-	}
 
-	Decoder::~Decoder()
-	{
 
-		assert(this->_inputFile != nullptr, "file wasnt created");
-		if (this->_inputFile->is_open())this->_inputFile->close();
-		delete this->_inputFile;
-	}
+	Decoder::~Decoder() {	}
 
 	bool Decoder::VerifyFormat()
 	{
@@ -94,13 +82,13 @@ namespace H4z0t {
 			u32 u;
 			char c[5]{};
 		}fmt;
-		fmt.u = this->Read<u32>();
+		fmt.u = _inputFile.Read<u32>();
 		return strcmp(FMT_HEADER_, fmt.c) == 0;
 	}
 
 	bool Decoder::VerifyVersion()
 	{
-		u32 v = this->Read<u32>();
+		u32 v = _inputFile.Read<u32>();
 		return FMT_VERSION == v;
 
 	}
