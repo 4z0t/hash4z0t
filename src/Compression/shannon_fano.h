@@ -296,6 +296,7 @@ namespace Compression
 			}
 			auto t1 = passedThreshold / 2;
 			auto t2 = threshold - t1;
+			if (middle == start)middle++;
 			Split(unitsToCodes, frequency, start, middle, t1);
 			Split(unitsToCodes, frequency, middle, end, t2);
 		}
@@ -437,6 +438,7 @@ namespace Compression
 		{
 			Decoder d;
 			BytesVector res;
+			res.reserve(input.size());
 			BytesVector buff;
 			unit u;
 			for (size_t i = 0; i < input.size(); i++)

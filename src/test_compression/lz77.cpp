@@ -18,6 +18,15 @@ bool TestLZ(const std::string& s)
 	}
 }
 
+bool TestLZ(const Compression::BytesVector& original)
+{
+	auto bits = Compression::LZ77::Compress(original);
+
+	auto bytes = Compression::LZ77::Decompress(bits);
+	return (bytes == original);
+
+}
+
 
 
 std::vector<std::string> testCases = {
@@ -44,6 +53,16 @@ std::vector<std::string> testCases = {
 
 };
 
+BitsAndBytes::BytesVector RandomBytes(size_t size)
+{
+	using namespace BitsAndBytes;
+	BytesVector res(size);
+	for (size_t i = 0; i < size; i++)
+		res[i] = std::rand();
+	return res;
+}
+
+
 
 int main(int argc, char* argv[])
 {
@@ -66,6 +85,17 @@ int main(int argc, char* argv[])
 	//{
 	//	std::cout << u <<" ["<<(int)u<<"]" << std::endl;
 	//}
-
+	std::srand(0);
+	for (size_t i = 0; i < 10; i++)
+	{
+		if (!TestLZ(RandomBytes(1000)))
+		{
+			std::cerr << "Failed  compression for \t\t\"" << i << "\"\n";
+		}
+		else
+		{
+			std::cout << "Success compression for \t\"" << i << "\"\n";
+		}
+	}
 
 }
