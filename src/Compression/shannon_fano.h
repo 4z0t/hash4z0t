@@ -14,6 +14,16 @@ namespace Compression
 			_total = data.size();
 			this->_Count(data);
 			this->_Sort();
+
+
+		}
+
+		FrequencyTable(const std::vector<unit_normalized>& data)
+		{
+			_total = data.size();
+			_Restore(data);
+			_Sort();
+
 		}
 
 
@@ -28,11 +38,36 @@ namespace Compression
 			return _unitCount;
 		}
 
+		std::vector<unit_normalized> GetScaled()const
+		{
+			std::vector<unit_normalized>res;
+			std::transform(
+				_data.begin(),
+				_data.end(),
+				std::back_inserter(res),
+				[](const unit_frequency& uc)
+				{
+					return  unit_normalized(uc.first, uc.second * 255);
+				}
+			);
+			return res;
+		}
+
 		size_t GetTotal()const
 		{
 			return _total;
 		}
 	private:
+
+		void _Restore(const std::vector<unit_normalized>& data)
+		{
+			_data.reserve(data.size());
+			for (const auto& un : data)
+			{
+				_data.emplace_back(un.first, (double)un.second / 255);
+			}
+		}
+
 		void _Count(const BytesVector& data)
 		{
 			std::unordered_map<unit, size_t> _data;
@@ -56,9 +91,11 @@ namespace Compression
 				std::back_inserter(this->_data),
 				[total](const unit_count& uc)
 				{
-					return unit_frequency(uc.first, (double)uc.second / total);
+					return unit_frequency(uc.first, ((double)uc.second / total));
 				}
 			);
+
+
 			_unitCount = std::move(_data);
 		}
 
@@ -69,10 +106,14 @@ namespace Compression
 				_data.begin(), _data.end(),
 				[](const unit_frequency& a, const unit_frequency& b)
 				{
+					if (a.second == b.second)
+						return a.first > b.first;
 					return a.second > b.second;
 				}
 			);
 		}
+
+
 
 
 
@@ -100,29 +141,100 @@ namespace Compression
 
 	namespace ShannonFano
 	{
+		std::unordered_map<unit, Code > FrequencyToCodes(const FrequencyTable& ft);
+
+
 
 		class Decoder
 		{
 		public:
-			Decoder();
-			~Decoder();
+			Decoder() {};
+			~Decoder() {};
 
-			bool Next(unit u, BytesVector& v)
+			bool Next(unit u, BytesVector& res)
 			{
 				if (_dictSize == 0)
 				{
+					_head.reserve(_dictSize * 2);
 					_dictSize = u;
 					return false;
 				}
 
+				if (!_headDone && _head.size() != _dictSize * 2)
+				{
+					_head.push_back(u);
+					if (_head.size() == _dictSize * 2)
+					{
+						std::vector<unit_normalized> norm;
+						norm.reserve(_dictSize);
+						for (size_t i = 0; i < _head.size(); i += 2)
+						{
+							norm.emplace_back(_head[i], _head[i + 1]);
+						}
+						FrequencyTable f(norm);
+						_codes = FrequencyToCodes(f);
+						/*for (auto& cn : f.GetScaled())
+						{
+							std::cout << "[" << cn.first << "]:\t" << (int)cn.second << "\t" << _codes[cn.first] << std::endl;
+						}*/
+						_headDone = true;
+						_head.clear();
+					}
+					return false;
+				}
 
+				if (_len == 0)
+				{
+					_head.push_back(u);
+					if (_head.size() == sizeof(size_t))
+					{
+						_len = ReadBytes<size_t>(_head, 0);
+						_head.clear();
+					}
+					return false;
+				}
+
+
+				PushBytes(_buffer, u);
+
+				return Match(res);
 
 			}
 
+			bool Match(BytesVector& res)
+			{
+				if (curIndex == _len)  return false;
+				bool found = false;
+				BitsVector buff;
+				unit u;
+				size_t last_index;
+				for (size_t i = 0; i < _buffer.size(); i++)
+				{
+					buff.push_back(_buffer[i]);
+					if (MatchCode(_codes, buff, u))
+					{
+						res.push_back(u);
+						curIndex++;
+						buff.clear();
+						last_index = i;
+						found = true;
+						if (curIndex == _len)break;
+					}
+				}
+				if (found)
+				{
+					_buffer = BitsVector(_buffer.begin() + last_index + 1, _buffer.end());
+				}
+				return found;
+			}
 
 
 		private:
-			BitsVector buffer;
+			bool _headDone = false;
+			size_t _len = 0;
+			BytesVector _head;
+
+			BitsVector _buffer;
 			uint8_t _dictSize = 0;
 			std::unordered_map<unit, Code > _codes;
 			size_t curIndex = 0;
@@ -195,25 +307,15 @@ namespace Compression
 		std::unordered_map<unit, Code > FrequencyToCodes(const FrequencyTable& ft)
 		{
 			std::unordered_map<unit, Code> unitsToCodes;
-			auto& v = ft.Get();
+			FrequencyTable ft_norm(ft.GetScaled());
+			auto& v = ft_norm.Get();
 			for (auto& p : v)
 			{
+				//std::cout << "[" << p.first << "]:\t" << p.second  << std::endl;
 				unitsToCodes[p.first] = std::vector<bool>();
 			}
 
 			Split(unitsToCodes, v, 0, v.size(), 0.5);
-			//#if _DEBUG 
-			//			for (auto& p : v)
-			//			{
-			//
-			//				std::cout << p.first << "\t[" << (int)(p.first) << "]\t";
-			//				for (auto& bit : unitsToCodes[p.first])
-			//				{
-			//					std::cout << bit;
-			//				}
-			//				std::cout << "\t" << p.second << '\n';
-			//			}
-			//#endif
 			return unitsToCodes;
 		}
 
@@ -231,6 +333,22 @@ namespace Compression
 				PushBytes(head, uc.first);											//unit
 				PushBytes(head, codeSize);											//code size
 				head.insert(head.end(), uc.second.begin(), uc.second.end());		//code itself
+			}
+
+			return head;
+		}
+
+		BitsVector MakeHead(const std::vector<unit_normalized>& unitsToNorm)
+		{
+			std::vector<bool> head;
+			//head.reserve();
+			uint8_t dictSize = unitsToNorm.size();
+			uint8_t codeSize = 0;
+			PushBytes(head, dictSize);//size of a dict
+			for (const auto& uc : unitsToNorm)
+			{
+				PushBytes(head, uc.first);											//unit
+				PushBytes(head, uc.second);											//code size
 			}
 
 			return head;
@@ -257,8 +375,12 @@ namespace Compression
 		{
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
-
-			BitsVector msg = MakeHead(unitsToCodes);
+			auto codes_norm = f.GetScaled();
+			/*for (auto& cn : codes_norm)
+			{
+				std::cout << "[" << cn.first << "]:\t" << (int)cn.second << "\t" << unitsToCodes[cn.first] << std::endl;
+			}*/
+			BitsVector msg = MakeHead(codes_norm);
 			PushBytes(msg, f.GetTotal());
 			auto s = GetEncodedSize(f, unitsToCodes);
 
@@ -269,6 +391,10 @@ namespace Compression
 			}
 			return msg;
 		}
+
+
+
+
 
 
 		std::unordered_map<unit, Code > UnpackHead(const BitsVector& bits, size_t& i)
@@ -314,6 +440,24 @@ namespace Compression
 			}
 
 
+			return res;
+		}
+
+		_NODISCARD
+			BytesVector Decompress(const BytesVector& input)
+		{
+			Decoder d;
+			BytesVector res;
+			BytesVector buff;
+			unit u;
+			for (size_t i = 0; i < input.size(); i++)
+			{
+				if (d.Next(input[i], buff))
+				{
+					res.insert(res.end(), buff.begin(), buff.end());
+					buff.clear();
+				}
+			}
 			return res;
 		}
 

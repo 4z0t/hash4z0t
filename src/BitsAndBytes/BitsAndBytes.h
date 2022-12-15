@@ -25,6 +25,7 @@ namespace BitsAndBytes
 	using Code = std::vector<bool>;
 	typedef  std::pair<unit, size_t> unit_count;
 	typedef  std::pair<unit, double> unit_frequency;
+	typedef  std::pair<unit, unit> unit_normalized;
 	typedef  std::pair<unit, Code> unit_Code;
 	using BitsVector = std::vector<bool>;
 	using BytesVector = std::vector<uint8_t>;
@@ -50,6 +51,22 @@ namespace BitsAndBytes
 		}
 		return res;
 	}
+
+	template<typename T>
+	T ReadBytes(const BytesVector& v, size_t start)
+	{
+		union
+		{
+			T res;
+			unit data[sizeof(T)];
+		}u;
+		for (size_t i = 0; i < sizeof(T); i++)
+		{
+			u.data[i] = (v[i + start]);
+		}
+		return u.res;
+	}
+
 
 	BitsVector ReadBits(const BitsVector& v, size_t start, size_t size)
 	{

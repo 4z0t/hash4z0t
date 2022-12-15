@@ -7,7 +7,7 @@
 bool TestSF(const std::string& s)
 {
 	auto original = Compression::BytesVector(s.begin(), s.end());
-	auto bits = Compression::ShannonFano::Compress(original);
+	auto bits = Compression::ToBytes(Compression::ShannonFano::Compress(original));
 
 	auto bytes = Compression::ShannonFano::Decompress(bits);
 	if (bytes == original)
@@ -40,7 +40,7 @@ std::vector<std::string> testCases = {
 	"",
 	"",
 	"",
-	 
+
 
 };
 
@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
 	{
 		if (!TestSF(s))
 		{
+			std::cerr << s << std::endl;
 			std::cerr << "Failed  compression for \t\t\"" << s << "\"\n";
 		}
 		else
