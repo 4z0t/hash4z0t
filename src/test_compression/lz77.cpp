@@ -7,7 +7,8 @@ bool TestLZ(const std::string& s)
 {
 	auto original = Compression::BytesVector(s.begin(), s.end());
 	auto bits = Compression::LZ77::Compress(original);
-
+	std::cout << original.size() << "\n";
+	std::cout << bits.size() << "\n";
 	auto bytes = Compression::LZ77::Decompress(bits);
 	if (bytes == original)
 		return true;
@@ -21,7 +22,8 @@ bool TestLZ(const std::string& s)
 bool TestLZ(const Compression::BytesVector& original)
 {
 	auto bits = Compression::LZ77::Compress(original);
-
+	std::cout << original.size() << "\n";
+	std::cout << bits.size() << "\n";
 	auto bytes = Compression::LZ77::Decompress(bits);
 	return (bytes == original);
 
@@ -88,7 +90,7 @@ int main(int argc, char* argv[])
 	std::srand(0);
 	for (size_t i = 0; i < 10; i++)
 	{
-		if (!TestLZ(RandomBytes(1000)))
+		if (!TestLZ(RandomBytes(10000)))
 		{
 			std::cerr << "Failed  compression for \t\t\"" << i << "\"\n";
 		}

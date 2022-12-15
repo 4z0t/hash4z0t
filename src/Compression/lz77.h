@@ -11,15 +11,7 @@ namespace Compression
 	using OutputByteStream = std::ostream;
 
 
-	template<typename T>
-	void ShiftLeft(std::vector<T>& vec, size_t shift)
-	{
-		for (size_t i = 0; i < vec.size() - shift; i++)
-		{
-			vec[i] = vec[shift + i];
-		}
-		vec.resize(vec.size() - shift);
-	}
+	
 
 
 	namespace LZ77

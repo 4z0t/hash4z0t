@@ -219,7 +219,7 @@ namespace Compression
 				}
 				if (found)
 				{
-					_buffer = BitsVector(_buffer.begin() + last_index + 1, _buffer.end());
+					ShiftLeft(_buffer, last_index + 1);
 				}
 				return found;
 			}
