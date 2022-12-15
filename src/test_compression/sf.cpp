@@ -8,7 +8,8 @@ bool TestSF(const std::string& s)
 {
 	auto original = Compression::BytesVector(s.begin(), s.end());
 	auto bits = Compression::ToBytes(Compression::ShannonFano::Compress(original));
-
+	std::cout << original.size() << "\n";
+	std::cout << bits.size() << "\n";
 	auto bytes = Compression::ShannonFano::Decompress(bits);
 	if (bytes == original)
 		return true;
@@ -17,6 +18,17 @@ bool TestSF(const std::string& s)
 		std::cout << std::string(bytes.begin(), bytes.end()) << "\n";
 		return false;
 	}
+}
+
+bool TestSF(const  BitsAndBytes::BytesVector& original)
+{
+	auto bits = Compression::ToBytes(Compression::ShannonFano::Compress(original));
+	std::cout << original.size() << "\n";
+	std::cout << bits.size() << "\n";
+	auto bytes = Compression::ShannonFano::Decompress(bits);
+	return (bytes == original);
+	
+
 }
 
 
@@ -44,6 +56,15 @@ std::vector<std::string> testCases = {
 
 };
 
+BitsAndBytes::BytesVector RandomBytes(size_t size)
+{
+	using namespace BitsAndBytes;
+	BytesVector res(size);
+	for (size_t i = 0; i < size; i++)
+		res[i] = std::rand();
+	return res;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -57,6 +78,18 @@ int main(int argc, char* argv[])
 		else
 		{
 			std::cout << "Success compression for \t\"" << s << "\"\n";
+		}
+	}
+	std::srand(0);
+	for (size_t i = 0; i < 10; i++)
+	{
+		if (!TestSF(RandomBytes(1000)))
+		{
+			std::cerr << "Failed  compression for \t\t\"" << i << "\"\n";
+		}
+		else
+		{
+			std::cout << "Success compression for \t\"" << i << "\"\n";
 		}
 	}
 

@@ -272,7 +272,7 @@ namespace Compression
 					auto key = frequency[i].first;
 					prev = c;
 					c += frequency[i].second;
-					if (!passed && c > threshold)
+					if (!passed && (c > threshold || frequency[i].second == 0.0 && i >= (start + end) / 2))
 					{
 						if ((c - threshold) > (threshold - prev))
 						{
