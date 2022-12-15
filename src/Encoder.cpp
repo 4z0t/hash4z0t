@@ -85,6 +85,9 @@ namespace H4z0t {
 
 
 
+
+
+
 	void Encoder::MakeHeader(u32 fileCount)
 	{
 		this->MakeHeader();

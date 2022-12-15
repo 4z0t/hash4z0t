@@ -23,14 +23,15 @@ namespace H4z0t
 				char c = file.Get();
 				if (_data.find(c) == _data.end())_data[c] = 0;
 				_data[c] += 1;
-
 			}
 		}
 
-		const std::unordered_map<char, size_t>& GetData()
+		const std::unordered_map<char, size_t>& GetData()const
 		{
 			return _data;
 		}
+
+
 
 		~FileData() {};
 	private:
