@@ -1,7 +1,8 @@
 #pragma once
 #include "internalhash4z0t.h"
 #include "File.h"
-#include <sstream>
+#include "FileData.h"
+
 namespace H4z0t {
 
 

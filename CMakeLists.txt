@@ -42,6 +42,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp
     src/h4z0t.h
        "src/ArgumentsManager.h"
+       "src/FileData.h"
 "src/Compression/shannon_fano.h" 
 "src/Compression/compression.h" 
 "src/Compression/lz77.h"

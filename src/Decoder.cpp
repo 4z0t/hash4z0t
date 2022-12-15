@@ -42,7 +42,7 @@ namespace H4z0t {
 		{
 			curDir /= savePath;
 		}
-		u32 filesCount = FilesCount();
+		u32 filesCount = FilesCount();  
 
 
 		for (u32 i = 0; i < filesCount; i++)
@@ -56,7 +56,7 @@ namespace H4z0t {
 				std::cout << "File opened\t" << name << std::endl;
 				for (uintmax_t i = 0; i < h.dataLen; i++)
 				{
-					file.Put(_inputFile.Read<char>());
+					file.Put(_inputFile.Get());
 				}
 			}
 			else

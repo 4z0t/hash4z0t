@@ -30,13 +30,6 @@
 
 namespace H4z0t
 {
-
-
-
-
-
-
-
 	class ArgumentsManager
 	{
 	public:
@@ -150,7 +143,7 @@ namespace H4z0t
 			CheckArgs(args);
 			return args;
 		}
-		~ArgumentsManager() {};
+
 	private:
 		static void CheckArgs(Arguments& args)
 		{
@@ -158,7 +151,4 @@ namespace H4z0t
 			if (args.targets.empty())args.mode = Mode::IncorrectArguments;
 		}
 	};
-
-
-
 }

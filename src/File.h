@@ -31,13 +31,18 @@ namespace H4z0t {
 		{
 			Header h;
 			h.nameLen = _relative.u8string().length();
-			h.dataLen = FS::directory_entry(_path).file_size();
+			h.dataLen = GetSize();
 			return h;
 		}
 
 		Path GetName()
 		{
 			return _relative;
+		}
+
+		uintmax_t GetSize()
+		{
+			return FS::directory_entry(_path).file_size();
 		}
 
 

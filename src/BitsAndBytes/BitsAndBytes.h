@@ -100,5 +100,4 @@ std::ostream& operator<<(std::ostream& out, const BitsAndBytes::BitsVector& v)
 		out << (int)v[i];
 	}
 	return out;
-
 }
