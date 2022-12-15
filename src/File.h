@@ -45,6 +45,10 @@ namespace H4z0t {
 			return FS::directory_entry(_path).file_size();
 		}
 
+		const Path& GetPath()
+		{
+			return _path;
+		}
 
 
 		bool Open(bool read, const Path& path)
@@ -101,6 +105,15 @@ namespace H4z0t {
 		{
 			assert(_file != nullptr);
 			_file->write(s.c_str(), s.length());
+		}
+
+		template<typename T>
+		void Write(const std::vector<T>& v)
+		{
+			for (const auto& el : v)
+			{
+				Write(el);
+			}
 		}
 
 

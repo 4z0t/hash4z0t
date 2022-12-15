@@ -1,9 +1,12 @@
 #pragma once
 
 #include "internalhash4z0t.h"
+
 #include "FileRegister.h"
 #include "File.h"
 #include "FileData.h"
+
+
 namespace H4z0t {
 
 
@@ -29,6 +32,7 @@ namespace H4z0t {
 
 		void Start(const Path& filesPath);
 
+		void ProcessFile(File&);
 
 		~Encoder();
 

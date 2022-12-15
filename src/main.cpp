@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 	{
 		try
 		{
-			Encoder encoder(args.savePath);
+			Encoder encoder(args);
 			encoder.Start(args.targets[0]);
 		}
 		catch (std::exception)

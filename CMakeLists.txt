@@ -13,14 +13,18 @@ endif()
 add_library(encoder OBJECT 
     src/Encoder.h
     src/Encoder.cpp
-  "src/Compression/shannon_fano.h" "src/Compression/compression.h" "src/Compression/lz77.h" "src/BitsAndBytes/BitsAndBytes.h")
+  "src/Compression/shannon_fano.h" 
+  "src/Compression/compression.h"
+  "src/Compression/lz77.h" 
+  "src/BitsAndBytes/BitsAndBytes.h")
 
 add_library(decoder OBJECT 
    src/Decoder.h
     src/Decoder.cpp
     "src/Compression/shannon_fano.h"
     "src/Compression/compression.h"
-    "src/Compression/lz77.h" "src/BitsAndBytes/BitsAndBytes.h")
+    "src/Compression/lz77.h"
+    "src/BitsAndBytes/BitsAndBytes.h")
 
 
 
@@ -28,7 +32,6 @@ add_library(decoder OBJECT
 add_library(internal4z0t OBJECT 
    src/internalhash4z0t.cpp
     src/internalhash4z0t.h
-    "src/BitsAndBytes/BitsAndBytes.h"
 
  )
 
@@ -41,12 +44,9 @@ add_executable(${CMAKE_PROJECT_NAME}
 
     src/main.cpp
     src/h4z0t.h
-       "src/ArgumentsManager.h"
-       "src/FileData.h"
-"src/Compression/shannon_fano.h" 
-"src/Compression/compression.h" 
-"src/Compression/lz77.h"
- "src/BitsAndBytes/BitsAndBytes.h"
+    "src/ArgumentsManager.h"
+    "src/FileData.h"
+    "src/BitsAndBytes/BitsAndBytes.h"
     )
 
 
@@ -81,7 +81,7 @@ set_target_properties(${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME_TEST_LZ} ${CMAK
             )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    encoder
-    decoder
-    internal4z0t
+    #encoder
+    #decoder
+   # internal4z0t
     )

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "internalhash4z0t.h"
-#include "Decoder.h"
-#include "Encoder.h"
+#include "internalhash4z0t.cpp"
+#include "Decoder.cpp"
+#include "Encoder.cpp"
 #include "ArgumentsManager.h"
 
 

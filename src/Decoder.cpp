@@ -1,4 +1,5 @@
 #include "Decoder.h"
+
 namespace H4z0t {
 	Decoder::Decoder()
 	{
@@ -42,7 +43,7 @@ namespace H4z0t {
 		{
 			curDir /= savePath;
 		}
-		u32 filesCount = FilesCount();  
+		u32 filesCount = FilesCount();
 
 
 		for (u32 i = 0; i < filesCount; i++)
@@ -51,28 +52,56 @@ namespace H4z0t {
 			std::string name = _inputFile.ReadString(h.nameLen);
 			File file(curDir / name);
 			FS::create_directories((curDir / name).parent_path());
-			if (file.Open(false))
+			try
 			{
-				std::cout << "File opened\t" << name << std::endl;
-				for (uintmax_t i = 0; i < h.dataLen; i++)
-				{
-					file.Put(_inputFile.Get());
-				}
+				ProcessFile(file, h);
 			}
-			else
+			catch (CantOpenFileException)
 			{
-
 				std::cout << "File not opened " << name << std::endl;
-				throw CantOpenFileException(name.c_str());
 			}
-
-
 		}
 
 
 
 	}
 
+
+	void  Decoder::ProcessFile(File& file, const File::Header& header)
+	{
+		if (!file.Open(false))throw CantOpenFileException();
+
+		std::cout << "File opened\t" << file.GetPath() << std::endl;
+
+		if (header.comp == CompressionType::None)
+		{
+			for (uintmax_t i = 0; i < header.dataLen; i++)
+			{
+				file.Put(_inputFile.Get());
+			}
+			return;
+		}
+
+
+		if (header.comp == CompressionType::LZ77)
+		{
+			std::cout << "Decoding LZ77" << std::endl;
+			Compression:: BytesVector cache;
+			Compression::LZ77:: SlidingWindow window;
+			for (uintmax_t i = 0; i < header.dataLen;)
+			{
+				Compression::unit u = _inputFile.Get();
+				if (window.Decode(u, cache))
+				{
+					i += cache.size();
+					file.Write(cache);
+					cache.clear();
+				}
+			}
+			return;
+		}
+
+	}
 
 
 

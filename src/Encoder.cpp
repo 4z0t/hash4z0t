@@ -1,6 +1,4 @@
 #include "Encoder.h"
-#include "Encoder.h"
-#include "Encoder.h"
 namespace H4z0t {
 
 	Encoder::Encoder()
@@ -62,28 +60,94 @@ namespace H4z0t {
 			std::cout << f.path() << std::endl;
 			std::cout << f.path().lexically_relative(filesPath) << std::endl;
 			File file(f.path(), f.path().lexically_relative(filesPath));
-			if (file.Open(true))
+			try
 			{
-
-				File::Header h = file.MakeHeader();
-				WriteFileHeader(h);
-				_outputFile.Write(file.GetName().u8string());
-				for (uintmax_t i = 0; i < h.dataLen; i++)
-				{
-					_outputFile.Put(file.Get());
-				}
-
+				ProcessFile(file);
 			}
-			else
+			catch (CantOpenFileException& e)
 			{
 				std::cerr << "Unable to open file " << f.path() << std::endl;
 			}
+
 
 		}
 
 	}
 
+	void Encoder::ProcessFile(File& file)
+	{
 
+		if (!file.Open(true))throw CantOpenFileException();
+		File::Header h = file.MakeHeader();
+		h.comp = compression;
+		h.enc = encryption;
+		h.prot = protection;
+		WriteFileHeader(h);
+		_outputFile.Write(file.GetName().u8string());
+
+		if (compression == CompressionType::None)
+		{
+			std::cout << "Encoding with plain code" << std::endl;
+			for (uintmax_t i = 0; i < h.dataLen; i++)
+			{
+				_outputFile.Put(file.Get());
+			}
+			return;
+		}
+
+
+		if (compression == CompressionType::LZ77)
+		{
+			/*FileData file_data;
+			file_data.Collect(file.GetPath());
+			const auto data = file_data.GetData();*/
+			std::cout <<"Encoding with LZ77" << std::endl;
+			Compression::BytesVector cache;
+			cache.reserve(3);
+
+			Compression::LZ77::SlidingWindow window;
+			//window.SetRefUnit(file_data.GetLessCharInFile());
+
+
+			for (uintmax_t i = 0; i < h.dataLen; i++)
+			{
+				Compression::unit u = file.Get();
+				if (window.Encode(u, cache))
+				{
+					_outputFile.Write(cache);
+					cache.clear();
+				}
+			}
+			auto end = window.End();
+			_outputFile.Write(end);
+			return;
+		}
+
+		if (compression == CompressionType::SF)
+		{
+			std::cout << "Encoding with Shannon Fano" << std::endl;
+			/*Compression::BytesVector cache;
+			cache.reserve(3);
+
+			Compression::LZ77::SlidingWindow window;
+			window.SetRefUnit(file_data.GetLessCharInFile());
+
+
+			for (uintmax_t i = 0; i < h.dataLen; i++)
+			{
+				Compression::unit u = file.Get();
+				if (window.Encode(u, cache))
+				{
+					_outputFile.Write(cache);
+					cache.clear();
+				}
+				auto end = window.End();
+				_outputFile.Write(end);
+			}*/
+			return;
+		}
+
+	}
 
 
 

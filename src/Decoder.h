@@ -3,11 +3,8 @@
 #include "File.h"
 #include "FileData.h"
 
-namespace H4z0t {
-
-
-
-
+namespace H4z0t
+{
 
 	class Decoder
 	{
@@ -28,7 +25,7 @@ namespace H4z0t {
 		}
 
 		void Start(const Path& savePath);
-
+		void ProcessFile(File& , const File::Header&);
 
 
 		~Decoder();

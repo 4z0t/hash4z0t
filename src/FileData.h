@@ -33,6 +33,21 @@ namespace H4z0t
 		}
 
 
+		char GetLessCharInFile()
+		{
+			char c;
+			size_t count = std::numeric_limits<size_t>().max();
+			for (auto& d: _data)
+			{
+				if (d.second < count)
+				{
+					count = d.second;
+					c = d.first;
+				}
+			}
+			return c;
+		}
+
 
 		~FileData() {};
 	private:

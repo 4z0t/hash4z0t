@@ -10,6 +10,9 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include "Compression/lz77.h"
+#include "Compression/shannon_fano.h"
+
 
 namespace H4z0t
 {
