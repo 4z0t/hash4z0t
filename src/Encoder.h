@@ -176,24 +176,16 @@ namespace H4z0t {
 		if (compression == CompressionType::SF)
 		{
 			std::cout << "Encoding with Shannon Fano" << std::endl;
-			/*Compression::BytesVector cache;
-			cache.reserve(3);
+			FileData file_data;
+			file_data.Collect(file.GetPath());
+			const auto data = file_data.GetData();
+		
 
-			Compression::LZ77::SlidingWindow window;
-			window.SetRefUnit(file_data.GetLessCharInFile());
 
 
-			for (uintmax_t i = 0; i < h.dataLen; i++)
-			{
-				Compression::unit u = file.Get();
-				if (window.Encode(u, cache))
-				{
-					_outputFile.Write(cache);
-					cache.clear();
-				}
-				auto end = window.End();
-				_outputFile.Write(end);
-			}*/
+
+
+
 			return;
 		}
 

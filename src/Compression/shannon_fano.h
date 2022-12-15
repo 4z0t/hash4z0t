@@ -173,10 +173,6 @@ namespace Compression
 						}
 						FrequencyTable f(norm);
 						_codes = FrequencyToCodes(f);
-						/*for (auto& cn : f.GetScaled())
-						{
-							std::cout << "[" << cn.first << "]:\t" << (int)cn.second << "\t" << _codes[cn.first] << std::endl;
-						}*/
 						_headDone = true;
 						_head.clear();
 					}
@@ -311,7 +307,6 @@ namespace Compression
 			auto& v = ft_norm.Get();
 			for (auto& p : v)
 			{
-				//std::cout << "[" << p.first << "]:\t" << p.second  << std::endl;
 				unitsToCodes[p.first] = std::vector<bool>();
 			}
 
@@ -347,8 +342,8 @@ namespace Compression
 			PushBytes(head, dictSize);//size of a dict
 			for (const auto& uc : unitsToNorm)
 			{
-				PushBytes(head, uc.first);											//unit
-				PushBytes(head, uc.second);											//code size
+				PushBytes(head, uc.first);
+				PushBytes(head, uc.second);
 			}
 
 			return head;
@@ -376,14 +371,8 @@ namespace Compression
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
 			auto codes_norm = f.GetScaled();
-			/*for (auto& cn : codes_norm)
-			{
-				std::cout << "[" << cn.first << "]:\t" << (int)cn.second << "\t" << unitsToCodes[cn.first] << std::endl;
-			}*/
 			BitsVector msg = MakeHead(codes_norm);
 			PushBytes(msg, f.GetTotal());
-			auto s = GetEncodedSize(f, unitsToCodes);
-
 			for (size_t i = 0; i < input.size(); i++)
 			{
 				const auto& code = unitsToCodes[input[i]];
