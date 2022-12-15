@@ -81,7 +81,7 @@ set_target_properties(${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME_TEST_LZ} ${CMAK
             )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    #encoder
-    #decoder
-   # internal4z0t
+    encoder
+    decoder
+    internal4z0t
     )

@@ -101,6 +101,36 @@ namespace Compression
 	namespace ShannonFano
 	{
 
+		class Decoder
+		{
+		public:
+			Decoder();
+			~Decoder();
+
+			bool Next(unit u, BytesVector& v)
+			{
+				if (_dictSize == 0)
+				{
+					_dictSize = u;
+					return false;
+				}
+
+
+
+			}
+
+
+
+		private:
+			BitsVector buffer;
+			uint8_t _dictSize = 0;
+			std::unordered_map<unit, Code > _codes;
+			size_t curIndex = 0;
+		};
+
+
+
+
 		void Split
 		(
 			std::unordered_map<unit, Code>& unitsToCodes,	// unit -> code
@@ -172,18 +202,18 @@ namespace Compression
 			}
 
 			Split(unitsToCodes, v, 0, v.size(), 0.5);
-//#if _DEBUG 
-//			for (auto& p : v)
-//			{
-//
-//				std::cout << p.first << "\t[" << (int)(p.first) << "]\t";
-//				for (auto& bit : unitsToCodes[p.first])
-//				{
-//					std::cout << bit;
-//				}
-//				std::cout << "\t" << p.second << '\n';
-//			}
-//#endif
+			//#if _DEBUG 
+			//			for (auto& p : v)
+			//			{
+			//
+			//				std::cout << p.first << "\t[" << (int)(p.first) << "]\t";
+			//				for (auto& bit : unitsToCodes[p.first])
+			//				{
+			//					std::cout << bit;
+			//				}
+			//				std::cout << "\t" << p.second << '\n';
+			//			}
+			//#endif
 			return unitsToCodes;
 		}
 
