@@ -5,8 +5,7 @@
 namespace H4z0t {
 
 
-	class InvaildFileException : public std::exception {};
-	class CantOpenFileException : public std::exception { public: using std::exception::exception; };
+	
 
 
 	class Decoder
@@ -19,6 +18,7 @@ namespace H4z0t {
 		Decoder(String);
 		Decoder(Path);
 		Decoder(DirEntry);
+		Decoder(const Arguments& args);
 
 
 		bool VerifyFile()
@@ -26,7 +26,7 @@ namespace H4z0t {
 			return VerifyFormat() && VerifyVersion();
 		}
 
-		void Start(const String& savePath);
+		void Start(const Path& savePath);
 
 
 

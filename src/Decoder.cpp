@@ -20,7 +20,7 @@ namespace H4z0t {
 		_OpenFile(entry);
 	}
 
-	void Decoder::Start(const String& savePath)
+	void Decoder::Start(const Path& savePath)
 	{
 
 		if (!VerifyFile())

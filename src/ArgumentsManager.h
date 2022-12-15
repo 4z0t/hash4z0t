@@ -30,26 +30,11 @@
 
 namespace H4z0t
 {
-	using std::vector;
 
-	enum class Mode
-	{
-		None,
-		Decode,
-		Encode,
-		NotEnoughArguments,
-		IncorrectArguments
-	};
 
-	struct Arguments
-	{
-		Mode mode = Mode::None;
-		vector<Path> targets;
-		Path savePath;
-		CompressionType compression = CompressionType::None;
-		ProtectionType protection = ProtectionType::None;
-		EncryptionType encryption = EncryptionType::None;
-	};
+
+
+
 
 
 	class ArgumentsManager
@@ -57,7 +42,7 @@ namespace H4z0t
 	public:
 		ArgumentsManager() = delete;
 
-		static Arguments Process(int argc, const char** argv)
+		static Arguments Process(int argc, char** argv)
 		{
 			Arguments args;
 

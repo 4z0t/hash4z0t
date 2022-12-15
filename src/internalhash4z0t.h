@@ -13,6 +13,7 @@
 
 namespace H4z0t
 {
+	using std::vector;
 	namespace FS = std::filesystem;
 	using String = std::string;
 	using Path = FS::path;
@@ -58,6 +59,25 @@ namespace H4z0t
 	{
 
 
+	};
+
+	enum class Mode
+	{
+		None,
+		Decode,
+		Encode,
+		NotEnoughArguments,
+		IncorrectArguments
+	};
+
+	struct Arguments
+	{
+		Mode mode = Mode::None;
+		vector<Path> targets;
+		Path savePath;
+		CompressionType compression = CompressionType::None;
+		ProtectionType protection = ProtectionType::None;
+		EncryptionType encryption = EncryptionType::None;
 	};
 
 	using Files = std::list<DirEntry>;

@@ -17,6 +17,9 @@
 
 using namespace H4z0t;
 
+using std::cout;
+using std::endl;
+
 void dir_test()
 {
 
@@ -24,79 +27,58 @@ void dir_test()
 }
 
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
-	if (argc < 3)
+	Arguments args = ArgumentsManager::Process(argc, argv);
+
+	if (args.mode == Mode::IncorrectArguments)
 	{
-		std::cerr << "Not enough arguments";
+		cout << "Incorrect arguments" << endl;
 		return 1;
 	}
 
-	if (is_decode(argv[1]))
+	if (args.mode == Mode::NotEnoughArguments)
 	{
-		std::string savePath;
-		std::cout << "Decoding: \n";
-		for (int i = 2; i < argc; i++)
-		{
-			if (strcmp("--into", argv[i]) == 0)
-			{
-				if (i + 1 == argc)
-
-					std::cout << "incorrect location name" << std::endl;
-				else
-					savePath = argv[++i];
-
-			}
-			else
-				std::cout << "\t" << argv[i] << "\n";
-		}
-		try
-		{
-			Decoder decoder{ std::string(argv[2]) };
-			decoder.Start(savePath);
-		}
-		catch (const H4z0t::CantOpenFileException& e)
-		{
-			std::cerr << "Unable to open file " << e.what();
-			return 1;
-		}
-		catch (const H4z0t::InvaildFileException& e)
-		{
-			std::cerr << "Given file is invilid";
-			return 1;
-		}
-
-
+		cout << "Not enough arguments" << endl;
+		return 1;
 	}
-	else if (is_encode(argv[1]))
-	{
-		std::cout << "Encoding: \n";
-		for (int i = 2; i < argc; i++)
-		{
-			std::cout << "\t" << argv[i] << "\n";
-		}
 
+	if (args.mode == Mode::Decode)
+	{
+		for (const auto& path : args.targets)
+		{
+
+			try
+			{
+				Decoder decoder{ path };
+				decoder.Start(args.savePath);
+			}
+			catch (const H4z0t::CantOpenFileException& e)
+			{
+				std::cerr << "Unable to open file " << e.what();
+				return 1;
+			}
+			catch (const H4z0t::InvaildFileException& e)
+			{
+				std::cerr << "Given file is invilid";
+				return 1;
+			}
+
+		}
+		return EXIT_SUCCESS;
+	}
+	if (args.mode == Mode::Encode)
+	{
 		try
 		{
-
-			Encoder encoder;
-
-			encoder.Start(argv[2]);
+			Encoder encoder(args.savePath);
+			encoder.Start(args.targets[0]);
 		}
 		catch (std::exception)
 		{
 			return 1;
 		}
-
-
-
+		return EXIT_SUCCESS;
 	}
-	else
-	{
-		std::cout << "Unknown flag. Available flags are:\n" << DECODE_FLAG << "\n" << ENCODE_FLAG;
-		return 1;
-	}
-
-	return EXIT_SUCCESS;
 }
 
