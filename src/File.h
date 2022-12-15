@@ -72,12 +72,14 @@ namespace H4z0t {
 		template<typename T>
 		void Write(const T& value)
 		{
+			assert(_file != nullptr);
 			_file->write(reinterpret_cast<const char*>(&value), sizeof(T));
 		}
 
 		template<>
 		void Write(const String& s)
 		{
+			assert(_file != nullptr);
 			_file->write(s.c_str(), s.length());
 		}
 
@@ -85,11 +87,19 @@ namespace H4z0t {
 		template<typename T>
 		T Read()
 		{
+			assert(_file != nullptr);
 			T res;
 			_file->read(reinterpret_cast<char*>(&res), sizeof(T));
 			return res;
 		}
 
+		void Close()
+		{
+			assert(_file != nullptr);
+			if (_file->is_open())
+				_file->close();
+			_Free();
+		}
 
 
 		String ReadString(size_t len)
@@ -105,13 +115,24 @@ namespace H4z0t {
 			if (_file == nullptr)return;
 			if (_file->is_open())
 				_file->close();
-			delete _file;
-
+			_Free();
 		}
 
 
 
 	private:
+
+
+
+		void _Free()
+		{
+			if (_file == nullptr)return;
+			delete _file;
+			_file = nullptr;
+		}
+
+
+
 		Path _path;
 		Path _relative;
 
