@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	std::srand(0);
 	for (size_t i = 0; i < 10; i++)
 	{
-		if (!TestSF(RandomBytes(1000)))
+		if (!TestSF(RandomBytes(5000)))
 		{
 			std::cerr << "Failed  compression for \t\t\"" << i << "\"\n";
 		}

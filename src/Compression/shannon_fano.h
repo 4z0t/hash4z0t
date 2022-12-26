@@ -197,6 +197,20 @@ namespace Compression
 
 			}
 
+
+			size_t GetMinCodeSize()
+			{
+				size_t min_len = 256;
+				for (const auto& k : _codes)
+				{
+					if (min_len > k.second.size())
+					{
+						min_len = k.second.size();
+					}
+				}
+				return min_len;
+			}
+
 			bool Match(BytesVector& res)
 			{
 				if (curIndex == _len)  return false;
@@ -204,10 +218,13 @@ namespace Compression
 				BitsVector buff;
 				unit u;
 				size_t last_index;
+
+				size_t min_len = GetMinCodeSize();
+
 				for (size_t i = 0; i < _buffer.size(); i++)
 				{
 					buff.push_back(_buffer[i]);
-					if (MatchCode(_codes, buff, u))
+					if (buff.size() >= min_len && MatchCode(_codes, buff, u))
 					{
 						res.push_back(u);
 						curIndex++;
