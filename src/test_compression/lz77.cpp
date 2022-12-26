@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 	std::srand(0);
 	for (size_t i = 0; i < 10; i++)
 	{
-		if (!TestLZ(RandomBytes(10000)))
+		if (!TestLZ(RandomBytes(1'000'000)))
 		{
 			std::cerr << "Failed  compression for \t\t\"" << i << "\"\n";
 		}

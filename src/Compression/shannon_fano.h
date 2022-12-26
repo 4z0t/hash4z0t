@@ -6,7 +6,7 @@
 namespace Compression
 {
 
-#if _DEBUG
+#if false
 #define __debug_log(exp) std::cout << exp <<std::endl;
 #else
 #define __debug_log(exp) (void)0;
@@ -375,34 +375,16 @@ namespace Compression
 		std::unordered_map<unit, Code > FrequencyToCodes(const FrequencyTable& ft)
 		{
 			std::unordered_map<unit, Code> unitsToCodes;
-			auto& v = ft.Get();
+			const auto& v = ft.Get();
 			for (auto& p : v)
 			{
 				unitsToCodes[p.first] = std::vector<bool>();
 			}
-
 			Split(unitsToCodes, v, 0, v.size(), 0.5);
 			return unitsToCodes;
 		}
 
 
-		BitsVector MakeHead(const std::unordered_map<unit, Code>& unitsToCodes)
-		{
-			std::vector<bool> head;
-			//head.reserve();
-			uint8_t dictSize = unitsToCodes.size();
-			uint8_t codeSize = 0;
-			PushBytes(head, dictSize);//size of a dict
-			for (const unit_Code& uc : unitsToCodes)
-			{
-				codeSize = uc.second.size();
-				PushBytes(head, uc.first);											//unit
-				PushBytes(head, codeSize);											//code size
-				head.insert(head.end(), uc.second.begin(), uc.second.end());		//code itself
-			}
-
-			return head;
-		}
 
 		BitsVector MakeHead(const std::vector<unit_normalized>& unitsToNorm)
 		{
@@ -454,56 +436,6 @@ namespace Compression
 			return msg;
 		}
 
-
-
-
-
-
-		std::unordered_map<unit, Code > UnpackHead(const BitsVector& bits, size_t& i)
-		{
-			size_t index = 0;
-			std::unordered_map<unit, Code > codes;
-			uint8_t dictSize = ReadBytes<uint8_t>(bits, index); index += 8;
-			for (uint8_t unitId = 0; unitId < dictSize; unitId++)
-			{
-				unit unit = ReadBytes<uint8_t>(bits, index); index += 8;
-				uint8_t codeLen = ReadBytes <uint8_t>(bits, index); index += 8;
-				auto code = ReadBits(bits, index, codeLen); index += codeLen;
-				codes[unit] = code;
-			}
-
-			i = index;
-			return codes;
-		}
-
-
-
-		_NODISCARD
-			BytesVector Decompress(const BitsVector& input)
-		{
-			size_t index;
-			auto ucodes = UnpackHead(input, index);
-			size_t size = ReadBytes<size_t>(input, index); index += sizeof(size_t) * 8;
-			BitsVector buff;
-			unit u;
-			BytesVector res;
-			res.reserve(size);
-			size_t curIndex = 0;
-			for (size_t i = index; i < input.size(); i++)
-			{
-				buff.push_back(input[i]);
-				if (MatchCode(ucodes, buff, u))
-				{
-					curIndex++;
-					res.push_back(u);
-					buff.clear();
-				}
-				if (curIndex == size)break;
-			}
-
-
-			return res;
-		}
 
 		_NODISCARD
 			BytesVector Decompress(const BytesVector& input)
