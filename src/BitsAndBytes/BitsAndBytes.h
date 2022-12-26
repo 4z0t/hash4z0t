@@ -113,6 +113,104 @@ namespace BitsAndBytes
 	}
 
 
+
+
+	class Bits;
+	class Bytes;
+
+
+	class Bits : private BitsVector
+	{
+	public:
+		using BitsVector::vector;
+		using BitsVector::operator=;
+		using BitsVector::operator[];
+
+		Bits(const BitsVector& v) :BitsVector(v) {}
+
+
+		Bits(const BytesVector& v) :BitsVector(v.size() * 8, false)
+		{
+			for (size_t i = 0; i < v.size(); i++)
+			{
+				for (size_t b = 0; b < 8; b++)
+				{
+					this->operator[](i * 8 + b) = (v[i] >> b) & 1;
+				}
+			}
+		}
+
+
+		template<typename T>
+		T GetBytesFrom(size_t start)const
+		{
+			T res{};
+			for (size_t i = 0; i < sizeof(T) * 8; i++)
+			{
+				res |= (((T)(this->at(i + start))) << i);
+			}
+			return res;
+		}
+
+
+		BitsVector GetBitsFrom(size_t start, size_t size)const
+		{
+			const auto& _b = begin();
+			return BitsVector(_b + start, _b + start + size);
+		}
+
+
+
+
+		size_t Size()const noexcept { return size(); }
+		void Clear() noexcept { return clear(); }
+
+
+
+
+
+
+		template<typename T>
+		void PushBytesBack(const T& val)
+		{
+			for (size_t i = 0; i < sizeof(T) * 8; i++)
+			{
+				push_back((val >> i) & 1);
+			}
+		}
+
+
+		void PushBack(const bool& val) { return push_back(val); }
+		
+
+
+
+
+	private:
+
+	};
+
+
+	class Bytes :private BytesVector
+	{
+	public:
+		using BytesVector::vector;
+		using BytesVector::operator=;
+		using BytesVector::operator[];
+
+
+
+
+		Bytes(const BytesVector& v) :BytesVector(v) {}
+
+
+		size_t Size()const noexcept { return size(); }
+		void Clear() noexcept { return clear(); }
+
+	private:
+
+	};
+
 }
 
 std::ostream& operator<<(std::ostream& out, const BitsAndBytes::BitsVector& v)
