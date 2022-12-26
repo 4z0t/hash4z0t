@@ -80,6 +80,7 @@ namespace H4z0t
 		CompressionType compression = CompressionType::None;
 		ProtectionType protection = ProtectionType::None;
 		EncryptionType encryption = EncryptionType::None;
+		char data[8]{};
 	};
 
 	using Files = std::list<DirEntry>;

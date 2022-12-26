@@ -19,6 +19,7 @@ namespace H4z0t {
 			CompressionType comp = CompressionType::None;
 			EncryptionType enc = EncryptionType::None;
 			ProtectionType prot = ProtectionType::None;
+			char data[8]{};
 		};
 		File() {}
 
