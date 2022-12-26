@@ -1,10 +1,29 @@
 #pragma once
 #include "compression.h"
+#include <algorithm>
 
 
 namespace Compression
 {
 
+#if _DEBUG
+#define __debug_log(exp) std::cout << exp <<std::endl;
+#else
+#define __debug_log(exp) (void)0;
+#endif
+
+#if _DEBUG
+	void DisplayCodes(const std::vector<unit_normalized>& norm)
+	{
+		for (const auto& k : norm)
+		{
+			std::cout << "[" << (int)k.first << "]\t" << (int)k.second << std::endl;
+		}
+		std::cout << std::endl;
+	}
+#else
+	void DisplayCodes(const std::vector<unit_normalized>& norm) {}
+#endif
 
 	class FrequencyTable
 	{
@@ -23,7 +42,6 @@ namespace Compression
 			_total = data.size();
 			_Restore(data);
 			_Sort();
-
 		}
 
 
@@ -38,16 +56,19 @@ namespace Compression
 			return _unitCount;
 		}
 
+
+
 		std::vector<unit_normalized> GetScaled()const
 		{
 			std::vector<unit_normalized>res;
+
 			std::transform(
 				_data.begin(),
 				_data.end(),
 				std::back_inserter(res),
 				[](const unit_frequency& uc)
 				{
-					return  unit_normalized(uc.first, uc.second * 255);
+					return  unit_normalized(uc.first, (unit)(uc.second * 255));//TODO
 				}
 			);
 			return res;
@@ -155,12 +176,13 @@ namespace Compression
 			{
 				if (_dictSize == 0)
 				{
+					_dictSize = (size_t)u + 1;
+					__debug_log("size: " << (int)_dictSize);
 					_head.reserve(_dictSize * 2);
-					_dictSize = u;
 					return false;
 				}
 
-				if (!_headDone && _head.size() != _dictSize * 2)
+				if (!_headDone)
 				{
 					_head.push_back(u);
 					if (_head.size() == _dictSize * 2)
@@ -171,6 +193,7 @@ namespace Compression
 						{
 							norm.emplace_back(_head[i], _head[i + 1]);
 						}
+						DisplayCodes(norm);
 						FrequencyTable f(norm);
 						_codes = FrequencyToCodes(f);
 						_headDone = true;
@@ -248,7 +271,7 @@ namespace Compression
 			BytesVector _head;
 
 			BitsVector _buffer;
-			uint8_t _dictSize = 0;
+			size_t _dictSize = 0;
 			std::unordered_map<unit, Code > _codes;
 			size_t curIndex = 0;
 		};
@@ -353,9 +376,10 @@ namespace Compression
 
 		BitsVector MakeHead(const std::vector<unit_normalized>& unitsToNorm)
 		{
-			std::vector<bool> head;
-			//head.reserve();
-			uint8_t dictSize = unitsToNorm.size();
+			BitsVector head;
+			__debug_log("unitsToNorm:" << unitsToNorm.size());
+			uint8_t dictSize = unitsToNorm.size() - 1;
+			head.reserve((size_t)dictSize + 1);
 			uint8_t codeSize = 0;
 			PushBytes(head, dictSize);//size of a dict
 			for (const auto& uc : unitsToNorm)
@@ -389,6 +413,7 @@ namespace Compression
 			FrequencyTable f(input);
 			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
 			auto codes_norm = f.GetScaled();
+			DisplayCodes(codes_norm);
 			BitsVector msg = MakeHead(codes_norm);
 			PushBytes(msg, f.GetTotal());
 			for (size_t i = 0; i < input.size(); i++)

@@ -4,6 +4,9 @@
 #include <bitset>
 
 
+using std::cout;
+using std::endl;
+
 bool TestSF(const std::string& s)
 {
 	auto original = Compression::BytesVector(s.begin(), s.end());
@@ -26,9 +29,14 @@ bool TestSF(const  BitsAndBytes::BytesVector& original)
 	std::cout << original.size() << "\n";
 	std::cout << bits.size() << "\n";
 	auto bytes = Compression::ShannonFano::Decompress(bits);
-	return (bytes == original);
-	
-
+	if (bytes == original)
+		return true;
+	else
+	{
+		cout << "Original len: " << original.size() << endl
+			<< "Decoded len: " << bytes.size() << endl;
+		return false;
+	}
 }
 
 
