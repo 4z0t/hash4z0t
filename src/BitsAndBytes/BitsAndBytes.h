@@ -147,7 +147,7 @@ namespace BitsAndBytes
 			T res{};
 			for (size_t i = 0; i < sizeof(T) * 8; i++)
 			{
-				res |= (((T)(this->at(i + start))) << i);
+				res |= (((T)(this->operator[](i + start))) << i);
 			}
 			return res;
 		}
