@@ -12,7 +12,7 @@ namespace Compression
 #define __debug_log(exp) (void)0;
 #endif
 
-#if _DEBUG
+#if false
 	void DisplayCodes(const std::vector<unit_normalized>& norm)
 	{
 		for (const auto& k : norm)
@@ -21,8 +21,23 @@ namespace Compression
 		}
 		std::cout << std::endl;
 	}
+
+	void DisplayCodes(const std::unordered_map<unit, Code>& map)
+	{
+		for (const auto& k : map)
+		{
+			std::cout << "[" << (int)k.first << "]\t";
+			for (auto v : k.second)
+			{
+				std::cout << (int)v;
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	}
 #else
 	void DisplayCodes(const std::vector<unit_normalized>& norm) {}
+	void DisplayCodes(const std::unordered_map<unit, Code>& map) {}
 #endif
 
 	class FrequencyTable
@@ -83,15 +98,24 @@ namespace Compression
 		void _Restore(const std::vector<unit_normalized>& data)
 		{
 			_data.reserve(data.size());
+
+			size_t norm_sum = 0;
 			for (const auto& un : data)
 			{
-				_data.emplace_back(un.first, (double)un.second / 255);
+				norm_sum += un.second;
+			}
+
+			for (const auto& un : data)
+			{
+				_data.emplace_back(un.first, (double)un.second / norm_sum);
 			}
 		}
 
 		void _Count(const BytesVector& data)
 		{
 			std::unordered_map<unit, size_t> _data;
+
+
 
 			for (size_t i = 0; i < data.size(); i++)
 			{
@@ -105,14 +129,20 @@ namespace Compression
 				}
 			}
 
-			auto total = this->_total;
+			size_t max_unit_count = 0;
+			for (const auto& k : _data)
+			{
+				max_unit_count = std::max(max_unit_count, k.second);
+			}
+
+
 			std::transform(
 				_data.begin(),
 				_data.end(),
 				std::back_inserter(this->_data),
-				[total](const unit_count& uc)
+				[max_unit_count](const unit_count& uc)
 				{
-					return unit_frequency(uc.first, ((double)uc.second / total));
+					return unit_frequency(uc.first, ((double)uc.second / max_unit_count));
 				}
 			);
 
@@ -193,9 +223,10 @@ namespace Compression
 						{
 							norm.emplace_back(_head[i], _head[i + 1]);
 						}
-						DisplayCodes(norm);
 						FrequencyTable f(norm);
+						DisplayCodes(norm);
 						_codes = FrequencyToCodes(f);
+						DisplayCodes(_codes);
 						_headDone = true;
 						_head.clear();
 					}
@@ -344,8 +375,7 @@ namespace Compression
 		std::unordered_map<unit, Code > FrequencyToCodes(const FrequencyTable& ft)
 		{
 			std::unordered_map<unit, Code> unitsToCodes;
-			FrequencyTable ft_norm(ft.GetScaled());
-			auto& v = ft_norm.Get();
+			auto& v = ft.Get();
 			for (auto& p : v)
 			{
 				unitsToCodes[p.first] = std::vector<bool>();
@@ -376,6 +406,7 @@ namespace Compression
 
 		BitsVector MakeHead(const std::vector<unit_normalized>& unitsToNorm)
 		{
+
 			BitsVector head;
 			__debug_log("unitsToNorm:" << unitsToNorm.size());
 			uint8_t dictSize = unitsToNorm.size() - 1;
@@ -402,20 +433,19 @@ namespace Compression
 			return s;
 		}
 
-		/*
-		*  | dict_size:uint8 | original_unit: unit, unit_size:uint8, unit_code : bits[unit_size] | msg_len : size_t | msg : uint8[] |
-		*  |                 |                           codes                                   |                                  |
-		*  |                        head														 |           body                   |
-		*/
+
 		_NODISCARD
 			BitsVector	Compress(const BytesVector& input)
 		{
 			FrequencyTable f(input);
-			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(f);
+			FrequencyTable ft_norm(f.GetScaled());
+			std::unordered_map<unit, Code> unitsToCodes = FrequencyToCodes(ft_norm);
 			auto codes_norm = f.GetScaled();
-			DisplayCodes(codes_norm);
 			BitsVector msg = MakeHead(codes_norm);
 			PushBytes(msg, f.GetTotal());
+
+			DisplayCodes(unitsToCodes);
+
 			for (size_t i = 0; i < input.size(); i++)
 			{
 				const auto& code = unitsToCodes[input[i]];
@@ -499,4 +529,4 @@ namespace Compression
 	}
 
 
-}
+	}

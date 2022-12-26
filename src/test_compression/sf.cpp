@@ -76,7 +76,7 @@ BitsAndBytes::BytesVector RandomBytes(size_t size)
 
 int main(int argc, char* argv[])
 {
-	for (auto& s : testCases)
+	/*for (auto& s : testCases)
 	{
 		if (!TestSF(s))
 		{
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 		{
 			std::cout << "Success compression for \t\"" << s << "\"\n";
 		}
-	}
+	}*/
 	std::srand(0);
 	for (size_t i = 0; i < 10; i++)
 	{
