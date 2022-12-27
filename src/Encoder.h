@@ -128,15 +128,16 @@ namespace H4z0t {
 	{
 
 		if (!file.Open(true))throw CantOpenFileException();
-		File::Header h = file.MakeHeader();
-		h.comp = compression;
-		h.enc = encryption;
-		h.prot = protection;
-		WriteFileHeader(h);
-		_outputFile.Write(file.GetName().u8string());
+		
 
 		if (compression == CompressionType::None)
 		{
+			File::Header h = file.MakeHeader();
+			h.comp = compression;
+			h.enc = encryption;
+			h.prot = protection;
+			WriteFileHeader(h);
+			_outputFile.Write(file.GetName().u8string());
 			std::cout << "Encoding with plain code" << std::endl;
 			for (uintmax_t i = 0; i < h.dataLen; i++)
 			{
@@ -148,15 +149,28 @@ namespace H4z0t {
 
 		if (compression == CompressionType::LZ77)
 		{
-			/*FileData file_data;
+			File::Header h = file.MakeHeader();
+
+			h.comp = compression;
+			h.enc = encryption;
+			h.prot = protection;
+
+			FileData file_data;
 			file_data.Collect(file.GetPath());
-			const auto data = file_data.GetData();*/
+
+			h.data[0] = file_data.GetLessCharInFile();
+
+			WriteFileHeader(h);
+			_outputFile.Write(file.GetName().u8string());
+
+
+		
 			std::cout << "Encoding with LZ77" << std::endl;
 			Compression::BytesVector cache;
 			cache.reserve(3);
 
 			Compression::LZ77::SlidingWindow window;
-			//window.SetRefUnit(file_data.GetLessCharInFile());
+			window.SetRefUnit(h.data[0]);
 
 
 			for (uintmax_t i = 0; i < h.dataLen; i++)
@@ -175,6 +189,13 @@ namespace H4z0t {
 
 		if (compression == CompressionType::SF)
 		{
+			File::Header h = file.MakeHeader();
+			h.comp = compression;
+			h.enc = encryption;
+			h.prot = protection;
+			WriteFileHeader(h);
+			_outputFile.Write(file.GetName().u8string());
+
 			std::cout << "Encoding with Shannon Fano" << std::endl;
 			FileData file_data;
 			file_data.Collect(file.GetPath());

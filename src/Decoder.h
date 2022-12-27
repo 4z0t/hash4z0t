@@ -140,6 +140,8 @@ namespace H4z0t {
 			std::cout << "Decoding LZ77" << std::endl;
 			Compression::BytesVector cache;
 			Compression::LZ77::SlidingWindow window;
+			window.SetRefUnit(header.data[0]);
+
 			for (uintmax_t i = 0; i < header.dataLen;)
 			{
 				Compression::unit u = _inputFile.Get();
