@@ -25,7 +25,7 @@ namespace H4z0t
 		}
 
 		void Start(const Path& savePath);
-		void ProcessFile(File& , const File::Header&);
+		void ProcessFile(File&, const File::Header&);
 
 
 		~Decoder();
@@ -152,6 +152,24 @@ namespace H4z0t {
 					cache.clear();
 				}
 			}
+			return;
+		}
+
+		if (header.comp == CompressionType::SF)
+		{
+			Compression::ShannonFano::Decoder d;
+			Compression::BytesVector buff;
+			for (uintmax_t i = 0; i < header.dataLen;)
+			{
+				Compression::unit u = _inputFile.Get();
+				if (d.Next(u, buff))
+				{
+					i += buff.size();
+					file.Write(buff);
+					buff.clear();
+				}
+			}
+
 			return;
 		}
 

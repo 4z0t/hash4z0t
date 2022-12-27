@@ -21,7 +21,10 @@ namespace Compression
 		}
 		std::cout << std::endl;
 	}
-
+#else
+	void DisplayCodes(const std::vector<unit_normalized>& norm) {}
+#endif
+#if false
 	void DisplayCodes(const std::unordered_map<unit, Code>& map)
 	{
 		for (const auto& k : map)
@@ -36,7 +39,6 @@ namespace Compression
 		std::cout << std::endl;
 	}
 #else
-	void DisplayCodes(const std::vector<unit_normalized>& norm) {}
 	void DisplayCodes(const std::unordered_map<unit, Code>& map) {}
 #endif
 
@@ -59,6 +61,29 @@ namespace Compression
 			_Sort();
 		}
 
+		FrequencyTable(const std::unordered_map<unit, size_t>& data)
+		{
+
+
+			size_t max_unit_count = 0;
+			for (const auto& k : data)
+			{
+				max_unit_count = std::max(max_unit_count, k.second);
+			}
+
+
+			std::transform(
+				data.begin(),
+				data.end(),
+				std::back_inserter(this->_data),
+				[max_unit_count](const unit_count& uc)
+				{
+					return unit_frequency(uc.first, ((double)uc.second / max_unit_count));
+				}
+			);
+			_Sort();
+		}
+
 
 
 		const std::vector<unit_frequency>& Get()const
@@ -66,10 +91,7 @@ namespace Compression
 			return _data;
 		}
 
-		const std::unordered_map<unit, size_t>& GetMap()const
-		{
-			return _unitCount;
-		}
+
 
 
 
@@ -83,7 +105,7 @@ namespace Compression
 				std::back_inserter(res),
 				[](const unit_frequency& uc)
 				{
-					return  unit_normalized(uc.first, (unit)(uc.second * 255));//TODO
+					return  unit_normalized(uc.first, (unit)(uc.second * 254 + 1));//TODO
 				}
 			);
 			return res;
@@ -147,7 +169,6 @@ namespace Compression
 			);
 
 
-			_unitCount = std::move(_data);
 		}
 
 
@@ -171,7 +192,7 @@ namespace Compression
 
 	private:
 		std::vector<unit_frequency> _data;
-		std::unordered_map<unit, size_t> _unitCount;;
+
 		size_t _total;
 	};
 
@@ -309,6 +330,20 @@ namespace Compression
 
 
 
+		bool PullBytesFromFront(BitsVector& bits, BytesVector& bytes)
+		{
+			auto size = bits.size();
+			if (size >= 8)
+			{
+				BitsVector r(bits.begin(), bits.begin() + (size / 8) * 8);
+				bytes = ToBytes(r);
+				ShiftLeft(bits, (size / 8) * 8);
+				return true;
+			}
+			return false;
+		}
+
+
 
 		void Split
 		(
@@ -404,16 +439,6 @@ namespace Compression
 			return head;
 		}
 
-		//Returns size in bits required for a message to fit
-		size_t GetEncodedSize(const FrequencyTable& ft, const std::unordered_map<unit, Code>& unitsToCodes)
-		{
-			size_t s = 0;
-			for (const unit_count& uc : ft.GetMap())
-			{
-				s += unitsToCodes.at(uc.first).size() * uc.second;
-			}
-			return s;
-		}
 
 
 		_NODISCARD
@@ -461,4 +486,4 @@ namespace Compression
 	}
 
 
-	}
+}

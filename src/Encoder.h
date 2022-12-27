@@ -128,7 +128,7 @@ namespace H4z0t {
 	{
 
 		if (!file.Open(true))throw CantOpenFileException();
-		
+
 
 		if (compression == CompressionType::None)
 		{
@@ -198,12 +198,31 @@ namespace H4z0t {
 			FileData file_data;
 			file_data.Collect(file.GetPath());
 			const auto data = file_data.GetData();
-		
 
+			Compression::FrequencyTable f(data);
+			Compression::FrequencyTable ft_norm(f.GetScaled());
+			auto unitsToCodes = Compression::ShannonFano::FrequencyToCodes(ft_norm);
+			auto codes_norm = f.GetScaled();
+			Compression::DisplayCodes(unitsToCodes);
+			Compression::DisplayCodes(codes_norm);
+			Compression::BitsVector msg = Compression::ShannonFano::MakeHead(codes_norm);
+			Compression::PushBytes<size_t>(msg, h.dataLen);
+			Compression::BytesVector cache;
 
+			for (uintmax_t i = 0; i < h.dataLen; i++)
+			{
+				if (Compression::ShannonFano::PullBytesFromFront(msg, cache))
+				{
+					_outputFile.Write(cache);
+					cache.clear();
+				}
 
+				Compression::unit u = file.Get();
+				const auto& code = unitsToCodes[u];
+				msg.insert(msg.end(), code.begin(), code.end());
+			}
 
-
+			_outputFile.Write(Compression::ToBytes(msg));
 
 			return;
 		}
