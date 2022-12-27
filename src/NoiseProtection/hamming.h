@@ -141,8 +141,9 @@ namespace NoiseProtection
 		}
 
 
-		BitsVector DecodeBlock(const BitsVector& block)
+		BitsVector DecodeBlock(BitsVector block)
 		{
+			if (block.size() != MAX_BLOCK_LEN)block.resize(MAX_BLOCK_LEN);
 			size_t check_bits = CheckBlockLength(block.size());
 			assert(check_bits != 0);
 			BitsVector output(block.size() - check_bits);
@@ -180,19 +181,55 @@ namespace NoiseProtection
 		BitsVector ToHamming(const BitsVector& input)
 		{
 			BitsVector output;
+			output.reserve(input.size() * MAX_BLOCK_LEN / MAX_MSG_LEN);
 
+			size_t index = 0;
+
+			while (true)
+			{
+				if (input.size() - index > MAX_MSG_LEN)
+				{
+					BitsVector block = EncodeMessage(BitsVector(input.begin() + index, input.begin() + index + MAX_MSG_LEN));
+					output.insert(output.end(), block.begin(), block.end());
+					index += MAX_MSG_LEN;
+				}
+				else
+				{
+					BitsVector block = EncodeMessage(BitsVector(input.begin() + index, input.end()));
+					output.insert(output.end(), block.begin(), block.end());
+					break;
+				}
+			}
 
 
 			return output;
 
 		}
 
-		BitsVector FromHamming(const BitsVector& input)
+		BitsVector FromHamming(const BitsVector& input, size_t len=0)
 		{
 			BitsVector output;
 
+			output.reserve(input.size() * MAX_MSG_LEN / MAX_BLOCK_LEN);
 
+			size_t index = 0;
 
+			while (true)
+			{
+				if (input.size() - index > MAX_BLOCK_LEN)
+				{
+					BitsVector block = DecodeBlock(BitsVector(input.begin() + index, input.begin() + index + MAX_BLOCK_LEN));
+					output.insert(output.end(), block.begin(), block.end());
+					index += MAX_MSG_LEN;
+				}
+				else
+				{
+					BitsVector block = DecodeBlock(BitsVector(input.begin() + index, input.end()));
+					output.insert(output.end(), block.begin(), block.end());
+					break;
+				}
+			}
+			if(len!=0)output.resize(len);
 			return output;
 
 		}
