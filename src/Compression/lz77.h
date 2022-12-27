@@ -11,7 +11,7 @@ namespace Compression
 	using OutputByteStream = std::ostream;
 
 
-	
+
 
 
 	namespace LZ77
@@ -31,19 +31,9 @@ namespace Compression
 				_window.reserve(_size);
 			}
 
-			SlidingWindow(unit size) : SlidingWindow(size, 0)
-			{
-				_window.reserve(_size);
-			}
+			SlidingWindow(unit size) : SlidingWindow(size, 0) {	}
 
-			SlidingWindow() : SlidingWindow(SLIDING_WINDOW_SIZE)
-			{
-			}
-
-			~SlidingWindow()
-			{
-
-			}
+			SlidingWindow() : SlidingWindow(SLIDING_WINDOW_SIZE) {}
 
 			bool Decode(unit u, BytesVector& out)
 			{
