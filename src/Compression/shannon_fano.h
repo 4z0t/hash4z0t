@@ -245,9 +245,7 @@ namespace Compression
 							norm.emplace_back(_head[i], _head[i + 1]);
 						}
 						FrequencyTable f(norm);
-						DisplayCodes(norm);
 						_codes = FrequencyToCodes(f);
-						DisplayCodes(_codes);
 						_headDone = true;
 						_head.clear();
 					}

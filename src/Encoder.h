@@ -200,11 +200,9 @@ namespace H4z0t {
 			const auto data = file_data.GetData();
 
 			Compression::FrequencyTable f(data);
-			Compression::FrequencyTable ft_norm(f.GetScaled());
-			const auto unitsToCodes = Compression::ShannonFano::FrequencyToCodes(ft_norm);
 			const auto codes_norm = f.GetScaled();
-			Compression::DisplayCodes(unitsToCodes);
-			Compression::DisplayCodes(codes_norm);
+			Compression::FrequencyTable ft_norm(codes_norm);
+			const auto unitsToCodes = Compression::ShannonFano::FrequencyToCodes(ft_norm);
 			Compression::BitsVector msg = Compression::ShannonFano::MakeHead(codes_norm);
 			Compression::PushBytes<size_t>(msg, h.dataLen);
 			Compression::BytesVector cache;
