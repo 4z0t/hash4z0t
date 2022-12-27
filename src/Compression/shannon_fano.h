@@ -413,7 +413,7 @@ namespace Compression
 			const auto& v = ft.Get();
 			for (auto& p : v)
 			{
-				unitsToCodes[p.first] = std::vector<bool>();
+				unitsToCodes[p.first] = BitsVector();
 			}
 			Split(unitsToCodes, v, 0, v.size(), 0.5);
 			return unitsToCodes;

@@ -8,7 +8,7 @@
 #include <iostream>
 #include "../BitsAndBytes/BitsAndBytes.h"
 
-namespace Protection
+namespace NoiseProtection
 {
 	using namespace BitsAndBytes;
 

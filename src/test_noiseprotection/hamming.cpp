@@ -36,24 +36,24 @@ std::vector<std::string> testCases = {
 
 int main(int argc, char* argv[])
 {
-	cout << Protection::Pow2(4) << endl;
-	cout << Protection::Hamming::CalculateCheckBitsCount(255) << endl;
+	cout << NoiseProtection::Pow2(4) << endl;
+	cout << NoiseProtection::Hamming::CalculateCheckBitsCount(255) << endl;
 	std::string s = "a";
-	auto bits = Protection::ToBits(Protection::BytesVector(s.begin(), s.end()));
+	auto bits = NoiseProtection::ToBits(NoiseProtection::BytesVector(s.begin(), s.end()));
 	cout << bits << endl;
-	bits = Protection::Hamming::EncodeMessage(bits);
+	bits = NoiseProtection::Hamming::EncodeMessage(bits);
 	cout << bits << endl;
 	size_t pos = bits.size() - 1;
 	bits[pos] = !bits[pos];
 	try
 	{
-		bits = Protection::Hamming::DecodeBlock(bits);
+		bits = NoiseProtection::Hamming::DecodeBlock(bits);
 		cout << bits << endl;
 
 	}
-	catch (Protection::Hamming::FlipBitException)
+	catch (NoiseProtection::Hamming::FlipBitException)
 	{
-		cout << Protection::Hamming::FindFlip(bits) << endl;
+		cout << NoiseProtection::Hamming::FindFlip(bits) << endl;
 	}
 
 }
