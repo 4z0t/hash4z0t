@@ -149,28 +149,26 @@ namespace H4z0t {
 
 		if (compression == CompressionType::LZ77)
 		{
+			FileData file_data;
+			file_data.Collect(file.GetPath());
 			File::Header h = file.MakeHeader();
 
 			h.comp = compression;
 			h.enc = encryption;
 			h.prot = protection;
 
-			FileData file_data;
-			file_data.Collect(file.GetPath());
-
-			h.data[0] = file_data.GetLessCharInFile();
+			uint8_t c = file_data.GetLessCharInFile();
+			h.data[0] = c;
 
 			WriteFileHeader(h);
 			_outputFile.Write(file.GetName().u8string());
 
 
-		
-			std::cout << "Encoding with LZ77" << std::endl;
 			Compression::BytesVector cache;
 			cache.reserve(3);
 
 			Compression::LZ77::SlidingWindow window;
-			window.SetRefUnit(h.data[0]);
+			window.SetRefUnit(c);
 
 
 			for (uintmax_t i = 0; i < h.dataLen; i++)

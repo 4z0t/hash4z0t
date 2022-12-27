@@ -19,7 +19,7 @@ namespace H4z0t {
 			CompressionType comp = CompressionType::None;
 			EncryptionType enc = EncryptionType::None;
 			ProtectionType prot = ProtectionType::None;
-			char data[8]{};
+			uint8_t data[8]{};
 		};
 		File() {}
 
@@ -41,7 +41,7 @@ namespace H4z0t {
 			return _relative;
 		}
 
-		uintmax_t GetSize()
+		uintmax_t GetSize()const
 		{
 			return FS::directory_entry(_path).file_size();
 		}

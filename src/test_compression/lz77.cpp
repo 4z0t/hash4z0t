@@ -9,7 +9,7 @@ bool TestLZ(const std::string& s)
 	auto bits = Compression::LZ77::Compress(original);
 	std::cout << original.size() << "\n";
 	std::cout << bits.size() << "\n";
-	auto bytes = Compression::LZ77::Decompress(bits);
+	auto bytes = Compression::LZ77::Decompress(bits, original.size());
 	if (bytes == original)
 		return true;
 	else
@@ -24,7 +24,7 @@ bool TestLZ(const Compression::BytesVector& original)
 	auto bits = Compression::LZ77::Compress(original);
 	std::cout << original.size() << "\n";
 	std::cout << bits.size() << "\n";
-	auto bytes = Compression::LZ77::Decompress(bits);
+	auto bytes = Compression::LZ77::Decompress(bits, original.size());
 	return (bytes == original);
 
 }

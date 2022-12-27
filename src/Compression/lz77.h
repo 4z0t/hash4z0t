@@ -44,7 +44,7 @@ namespace Compression
 					_isRef = false;
 					return true;
 				}
-				if (u == _refUnit) {
+				if (u == _refUnit && !_isRef) {
 
 					_isRef = true;
 					return false;
@@ -59,7 +59,6 @@ namespace Compression
 					_ref.offset = u;
 					this->UnpackRef(out);
 					_isRef = false;
-					_ref.len = 0;
 					return true;
 				}
 				PushWindow(u);
@@ -110,6 +109,7 @@ namespace Compression
 			BytesVector End()
 			{
 				BytesVector out;
+				//std::cout << (int)_ref.len << std::endl;
 				if (_ref.len != 0)
 				{
 					PushRef(out, _ref);
@@ -135,12 +135,14 @@ namespace Compression
 		private:
 			void UnpackRef(BytesVector& output)
 			{
-				for (unit i = 0; i < _ref.len; i++)
+
+				while (_ref.len != 0)
 				{
 					size_t end = _window.size();
 					unit u = _window[end - _ref.offset];
 					PushWindow(u);
 					output.push_back(u);
+					_ref.len--;
 				}
 			}
 
@@ -151,7 +153,7 @@ namespace Compression
 
 				unit length = 0;
 				unit pos = 0;
-				for (unit i = 0; i < _window.size(); i++)
+				for (size_t i = 0; i < _window.size(); i++)
 				{
 					if (_msg.size() == length)//whole msg fits
 					{
@@ -228,15 +230,18 @@ namespace Compression
 
 
 
-		BytesVector Decompress(const BytesVector& input)
+		BytesVector Decompress(const BytesVector& input, size_t len)
 		{
 			BytesVector res;
 			BytesVector cache;
 			SlidingWindow window;
-			for (unit u : input)
+			size_t i = 0;
+			for (size_t j = 0; j < len; i++)
 			{
+				unit u = input[i];
 				if (window.Decode(u, cache))
 				{
+					j += cache.size();
 					res.insert(res.end(), cache.begin(), cache.end());
 					cache.clear();
 				}

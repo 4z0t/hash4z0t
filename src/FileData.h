@@ -4,45 +4,53 @@
 #include <unordered_map>
 #include <algorithm>
 #include <iostream>
+#include <array>
 
 namespace H4z0t
 {
-
+	
 	class FileData
 	{
 	public:
+		using unit = uint8_t;
 		FileData() {};
 
 
 		void Collect(const Path& path)
 		{
 			File file(path);
-			if(!file.Open(true)) throw CantOpenFileException(path.u8string().c_str());
-
-			for (size_t i = 0; i < file.GetSize(); i++)
+			if (!file.Open(true)) throw CantOpenFileException(path.u8string().c_str());
+			uintmax_t size = file.GetSize();
+			for (uintmax_t i = 0; i < size; i++)
 			{
-				char c = file.Get();
-				if (_data.find(c) == _data.end())_data[c] = 0;
+				unit c = file.Get();
 				_data[c] += 1;
 			}
+			file.Close();
 		}
 
-		const std::unordered_map<char, size_t>& GetData()const
+		std::unordered_map<unit, size_t> GetData()const
 		{
-			return _data;
-		}
-
-
-		char GetLessCharInFile()
-		{
-			char c;
-			size_t count = std::numeric_limits<size_t>().max();
-			for (auto& d: _data)
+			std::unordered_map<unit, size_t> res;
+			for (size_t i = 0; i < _data.size(); i++)
 			{
-				if (d.second < count)
+				if (_data[i] != 0)
+					res[i] = _data[i];
+			}
+			return res;
+		}
+
+
+		unit GetLessCharInFile()
+		{
+			unit c;
+			size_t count = std::numeric_limits<size_t>().max();
+			for (size_t i = 0; i < _data.size(); i++)
+			{
+				if (_data[i] < count)
 				{
-					count = d.second;
-					c = d.first;
+					count = _data[i];
+					c = i;
 				}
 			}
 			return c;
@@ -51,8 +59,7 @@ namespace H4z0t
 
 		~FileData() {};
 	private:
-		std::unordered_map<char, size_t> _data;
-
+		std::array<size_t, 256> _data;
 	};
 
 
