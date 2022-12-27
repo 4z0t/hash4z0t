@@ -33,5 +33,5 @@ There are 3 arguments and 3 flags defined right now:
 
 * `--decode` and `--encode` are arguments for defining path(s) for file(s) to be processed
 * `--into` is argument for path where to store encoded/decoded data
-* `-lz77` and `--shanon-fano` are flags for compression types
+* `-lz77` and `-shanon-fano` are flags for compression types
 * `-hamming` is flag for protection type
