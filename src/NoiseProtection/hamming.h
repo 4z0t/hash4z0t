@@ -21,10 +21,11 @@ namespace NoiseProtection
 #define POW2CASE(n) case Pow2(n)-1: return (n)
 
 
-	constexpr size_t IsPow2m1(size_t n)
+	constexpr int IsPow2m1(size_t n)
 	{
 		switch (n)
 		{
+			POW2CASE(0);
 			POW2CASE(1);
 			POW2CASE(2);
 			POW2CASE(3);
@@ -40,7 +41,7 @@ namespace NoiseProtection
 			POW2CASE(13);
 			POW2CASE(14);
 		default:
-			return 0;
+			return -1;
 		}
 	}
 #undef POW2CASE
@@ -92,7 +93,7 @@ namespace NoiseProtection
 			{
 				for (size_t j = i; j < i + position; j++)
 				{
-					if (block[j] && IsPow2m1(j) == 0)check++;
+					if (block[j])check++;
 				}
 				i += 2 * position;
 			}
@@ -100,9 +101,10 @@ namespace NoiseProtection
 		}
 
 
-		BitsVector EncodeMessage(const BitsVector& msg)
+		BitsVector EncodeMessage(BitsVector msg)
 		{
-			size_t check_bits = CalculateCheckBitsCount(msg.size());
+			if (msg.size() != MAX_MSG_LEN)msg.resize(MAX_MSG_LEN);
+			size_t check_bits = MAX_CHECK_BITS;
 			BitsVector output(Pow2(check_bits) - 1, false);
 			{
 				size_t j = 0;
@@ -129,7 +131,6 @@ namespace NoiseProtection
 				}
 			}
 
-
 			for (size_t i = 0; i < check_bits; i++)
 			{
 				size_t position = Pow2(i);
@@ -141,11 +142,11 @@ namespace NoiseProtection
 		}
 
 
-		BitsVector DecodeBlock(BitsVector block)
+		BitsVector DecodeBlock(const BitsVector& block)
 		{
-			if (block.size() != MAX_BLOCK_LEN)block.resize(MAX_BLOCK_LEN);
-			size_t check_bits = CheckBlockLength(block.size());
-			assert(check_bits != 0);
+			assert(block.size() == MAX_BLOCK_LEN);
+			//if (block.size() != MAX_BLOCK_LEN)block.resize(MAX_BLOCK_LEN);
+			size_t check_bits = MAX_CHECK_BITS;
 			BitsVector output(block.size() - check_bits);
 
 
@@ -155,7 +156,8 @@ namespace NoiseProtection
 			{
 				size_t position = Pow2(i);
 
-				if (block[position - 1] != CalculateCheckBit(block, position)) throw FlipBitException();
+				if (CalculateCheckBit(block, position)) throw FlipBitException();
+				
 			}
 
 
@@ -206,7 +208,7 @@ namespace NoiseProtection
 
 		}
 
-		BitsVector FromHamming(const BitsVector& input, size_t len=0)
+		BitsVector FromHamming(const BitsVector& input, size_t len = 0)
 		{
 			BitsVector output;
 
@@ -220,7 +222,7 @@ namespace NoiseProtection
 				{
 					BitsVector block = DecodeBlock(BitsVector(input.begin() + index, input.begin() + index + MAX_BLOCK_LEN));
 					output.insert(output.end(), block.begin(), block.end());
-					index += MAX_MSG_LEN;
+					index += MAX_BLOCK_LEN;
 				}
 				else
 				{
@@ -229,7 +231,7 @@ namespace NoiseProtection
 					break;
 				}
 			}
-			if(len!=0)output.resize(len);
+			if (len != 0)output.resize(len);
 			return output;
 
 		}
