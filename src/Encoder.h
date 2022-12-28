@@ -23,7 +23,6 @@ namespace H4z0t
 
 		void _OpenFile(const Path&);
 
-		void MakeHeader();
 		void MakeHeader(u32 fileCount);
 
 
@@ -149,7 +148,6 @@ namespace H4z0t {
 			}
 			return;
 		}
-
 
 		if (compression == CompressionType::LZ77)
 		{

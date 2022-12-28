@@ -57,7 +57,7 @@ namespace H4z0t
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
 
-	const u32 FMT_NAME = '4z0t';
+	const u32 FMT_NAME = 't0z4';
 	struct Header
 	{
 		u32 name = FMT_NAME;

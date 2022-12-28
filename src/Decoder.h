@@ -134,7 +134,6 @@ namespace H4z0t {
 			return;
 		}
 
-
 		if (header.comp == CompressionType::LZ77)
 		{
 			Compression::BytesVector cache;
