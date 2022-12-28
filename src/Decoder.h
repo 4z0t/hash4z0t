@@ -19,9 +19,15 @@ namespace H4z0t
 		Decoder(const Path& path, const Arguments& args);
 
 
-		bool VerifyFile()
+		Header ReadFormatHeader()
 		{
-			return VerifyFormat() && VerifyVersion();
+			return _inputFile.Read<Header>();
+		}
+
+		bool VerifyFile(const Header &header)
+		{
+			return header.name == FMT_NAME && header.version == FMT_VERSION;
+
 		}
 
 		void Start(const Path& savePath);
@@ -31,12 +37,6 @@ namespace H4z0t
 		~Decoder();
 	protected:
 
-		u32 FilesCount()
-		{
-			return _inputFile.Read<u32>();
-		}
-		bool VerifyFormat();
-		bool VerifyVersion();
 		void _OpenFile(Path);
 
 
@@ -84,8 +84,8 @@ namespace H4z0t {
 
 	void Decoder::Start(const Path& savePath)
 	{
-
-		if (!VerifyFile())
+		Header head = ReadFormatHeader();
+		if (!VerifyFile(head))
 		{
 			throw InvaildFileException();
 		}
@@ -95,7 +95,7 @@ namespace H4z0t {
 		{
 			curDir /= savePath;
 		}
-		u32 filesCount = FilesCount();
+		u32 filesCount = head.files_count;
 
 
 		for (u32 i = 0; i < filesCount; i++)
@@ -188,23 +188,7 @@ namespace H4z0t {
 
 	Decoder::~Decoder() {	}
 
-	bool Decoder::VerifyFormat()
-	{
-		union FMT_Name
-		{
-			u32 u;
-			char c[5]{};
-		}fmt;
-		fmt.u = _inputFile.Read<u32>();
-		return strcmp(FMT_HEADER_, fmt.c) == 0;
-	}
 
-	bool Decoder::VerifyVersion()
-	{
-		u32 v = _inputFile.Read<u32>();
-		return FMT_VERSION == v;
-
-	}
 }
 
 

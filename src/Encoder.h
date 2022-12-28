@@ -87,17 +87,13 @@ namespace H4z0t {
 			throw CantOpenFileException(path.u8string().c_str());
 	}
 
-	void Encoder::MakeHeader()
-	{
-		_outputFile.Write(FMT_HEADER_, strlen(FMT_HEADER_));
-		_outputFile.Write(FMT_VERSION);
-	}
-
+	
 
 	void Encoder::MakeHeader(u32 fileCount)
 	{
-		this->MakeHeader();
-		_outputFile.Write(fileCount);
+		Header head{};
+		head.files_count = fileCount;
+		_outputFile.Write(head);
 	}
 
 
