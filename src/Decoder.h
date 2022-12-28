@@ -24,7 +24,7 @@ namespace H4z0t
 			return _inputFile.Read<Header>();
 		}
 
-		bool VerifyFile(const Header &header)
+		bool VerifyFile(const Header& header)
 		{
 			return header.name == FMT_NAME && header.version == FMT_VERSION;
 
@@ -34,7 +34,6 @@ namespace H4z0t
 		void ProcessFile(File&, const File::Header&);
 
 
-		~Decoder();
 	protected:
 
 		void _OpenFile(Path);
@@ -178,15 +177,8 @@ namespace H4z0t {
 
 	void Decoder::_OpenFile(Path path)
 	{
-		if (!_inputFile.Open(true, path))
-			throw CantOpenFileException(path.u8string().c_str());
-
+		if (!_inputFile.Open(true, path))throw CantOpenFileException(path.u8string().c_str());
 	}
-
-
-
-	Decoder::~Decoder() {	}
-
 
 }
 

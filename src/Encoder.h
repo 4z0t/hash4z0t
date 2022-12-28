@@ -7,7 +7,7 @@
 #include "FileData.h"
 
 
-namespace H4z0t 
+namespace H4z0t
 {
 
 
@@ -21,9 +21,8 @@ namespace H4z0t
 		Encoder(const Arguments& args);
 
 
-		void _OpenFile(const Path&);
 
-		void MakeHeader(u32 fileCount);
+		void WriteFormatHeader(u32 fileCount);
 
 
 		void WriteFileHeader(File::Header h);
@@ -34,9 +33,10 @@ namespace H4z0t
 
 		void ProcessFile(File&);
 
-		~Encoder();
-
 	protected:
+		void _OpenFile(const Path&);
+
+
 		File _outputFile;
 		Path _workPath;
 		CompressionType compression = CompressionType::None;
@@ -82,13 +82,12 @@ namespace H4z0t {
 
 	void Encoder::_OpenFile(const Path& path)
 	{
-		if (!_outputFile.Open(false, path))
-			throw CantOpenFileException(path.u8string().c_str());
+		if (!_outputFile.Open(false, path))	throw CantOpenFileException(path.u8string().c_str());
 	}
 
-	
 
-	void Encoder::MakeHeader(u32 fileCount)
+
+	void Encoder::WriteFormatHeader(u32 fileCount)
 	{
 		Header head{};
 		head.files_count = fileCount;
@@ -105,7 +104,7 @@ namespace H4z0t {
 	void Encoder::Start(const Path& filesPath)
 	{
 		auto files = GetFileList(filesPath);
-		MakeHeader(files.size());
+		WriteFormatHeader(files.size());
 		std::cout << files.size() << std::endl;
 		for (auto& f : files)
 		{
@@ -230,8 +229,4 @@ namespace H4z0t {
 	}
 
 
-
-
-
-	Encoder::~Encoder() {}
 }
