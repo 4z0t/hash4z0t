@@ -94,10 +94,9 @@ namespace H4z0t {
 		{
 			curDir /= savePath;
 		}
-		u32 filesCount = head.files_count;
 
 
-		for (u32 i = 0; i < filesCount; i++)
+		for (u32 i = 0; i < head.files_count; i++)
 		{
 			File::Header h = _inputFile.Read<File::Header>();
 			std::string name = _inputFile.ReadString(h.nameLen);

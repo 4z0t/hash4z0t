@@ -106,7 +106,7 @@ namespace H4z0t {
 		auto files = GetFileList(filesPath);
 		WriteFormatHeader(files.size());
 		std::cout << files.size() << std::endl;
-		for (auto& f : files)
+		for (const auto& f : files)
 		{
 
 			std::cout << f.path() << std::endl;
