@@ -66,6 +66,7 @@ std::vector<std::string> testCases = {
 
 BitsAndBytes::BytesVector RandomBytes(size_t size)
 {
+
 	using namespace BitsAndBytes;
 	BytesVector res(size);
 	for (size_t i = 0; i < size; i++)

@@ -57,7 +57,7 @@ namespace Compression
 						return false;
 					}
 					_ref.offset = u;
-					this->UnpackRef(out);
+					UnpackRef(out);
 					_isRef = false;
 					return true;
 				}

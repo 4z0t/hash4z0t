@@ -7,7 +7,8 @@
 #include "FileData.h"
 
 
-namespace H4z0t {
+namespace H4z0t 
+{
 
 
 	class Encoder
@@ -90,6 +91,13 @@ namespace H4z0t {
 	{
 		_outputFile.Write(FMT_HEADER_, strlen(FMT_HEADER_));
 		_outputFile.Write(FMT_VERSION);
+	}
+
+
+	void Encoder::MakeHeader(u32 fileCount)
+	{
+		this->MakeHeader();
+		_outputFile.Write(fileCount);
 	}
 
 
@@ -229,12 +237,6 @@ namespace H4z0t {
 
 
 
-
-	void Encoder::MakeHeader(u32 fileCount)
-	{
-		this->MakeHeader();
-		_outputFile.Write(fileCount);
-	}
 
 
 	Encoder::~Encoder() {}

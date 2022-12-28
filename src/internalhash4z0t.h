@@ -26,10 +26,11 @@ namespace H4z0t
 	class CantOpenFileException : public std::exception { public: using std::exception::exception; };
 
 	typedef uint32_t u32;
-	enum class DataType
+	enum class DataType :u32
 	{
-		Folder,
-		File
+
+		Files,
+		Pack,
 	};
 
 	enum class CompressionType :u32
@@ -56,12 +57,16 @@ namespace H4z0t
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
 
-
+	const u32 FMT_NAME = '4z0t';
 	struct Header
 	{
-
-
+		u32 name = FMT_NAME;
+		u32 version = FMT_VERSION;
+		DataType type = DataType::Files;
+		u32 files_count = 0;
 	};
+
+
 
 	enum class Mode
 	{
