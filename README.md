@@ -7,9 +7,9 @@ The executable is a program for compressing, error-detection/correction and encr
 
 ## Format Header
 
-| Data: | 4z0t | format version | files count | Total |
-|-------|-----:|---------------:|------------:|------:|
-| Bytes:| 4    |   4            |  4          | 12    |
+| Data: | 4z0t | format version | data type   | files count | Total |
+|-------|-----:|---------------:|------------:|------------:|------:|
+| Bytes:| 4    |   4            |  4          |  4          | 16    |
 
 ## Format Data
 
