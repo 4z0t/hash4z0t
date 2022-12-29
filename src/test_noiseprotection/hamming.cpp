@@ -12,8 +12,12 @@ bool TestHAM(const  BitsAndBytes::BytesVector& original)
 {
 	size_t len = original.size();
 	auto bits = NoiseProtection::Hamming::ToHamming(NoiseProtection::ToBits(original));
+
+	size_t flip_bit = ((size_t)std::rand()) % bits.size();
+	bits[flip_bit] = !bits[flip_bit];
 	std::cout << original.size() << "\n";
 	std::cout << bits.size() << "\n";
+	std::cout << flip_bit << std::endl;
 	try
 	{
 
@@ -76,13 +80,13 @@ BitsAndBytes::BytesVector RandomBytes(size_t size)
 
 int main(int argc, char* argv[])
 {
-
-	/*
+	
 	std::string s = "A";
 	auto bits = NoiseProtection::ToBits(NoiseProtection::BytesVector(s.begin(), s.end()));
 	cout << bits << endl;
 	bits = NoiseProtection::Hamming::EncodeMessage(bits);
 	cout << bits << endl;
+	bits[0] = !bits[0];;
 	try
 	{
 		bits = NoiseProtection::Hamming::DecodeBlock(bits);
@@ -94,8 +98,9 @@ int main(int argc, char* argv[])
 		cout << NoiseProtection::Hamming::FindFlip(bits) << endl;
 	}
 	return 0;
-	*/
 	
+
+
 
 	for (auto& s : testCases)
 	{

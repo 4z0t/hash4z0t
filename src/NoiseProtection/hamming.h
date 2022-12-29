@@ -157,7 +157,7 @@ namespace NoiseProtection
 				size_t position = Pow2(i);
 
 				if (CalculateCheckBit(block, position)) throw FlipBitException();
-				
+
 			}
 
 
@@ -208,33 +208,6 @@ namespace NoiseProtection
 
 		}
 
-		BitsVector FromHamming(const BitsVector& input, size_t len = 0)
-		{
-			BitsVector output;
-
-			output.reserve(input.size() * MAX_MSG_LEN / MAX_BLOCK_LEN);
-
-			size_t index = 0;
-
-			while (true)
-			{
-				if (input.size() - index > MAX_BLOCK_LEN)
-				{
-					BitsVector block = DecodeBlock(BitsVector(input.begin() + index, input.begin() + index + MAX_BLOCK_LEN));
-					output.insert(output.end(), block.begin(), block.end());
-					index += MAX_BLOCK_LEN;
-				}
-				else
-				{
-					BitsVector block = DecodeBlock(BitsVector(input.begin() + index, input.end()));
-					output.insert(output.end(), block.begin(), block.end());
-					break;
-				}
-			}
-			if (len != 0)output.resize(len);
-			return output;
-
-		}
 
 		size_t FindFlip(const BitsVector& block)
 		{
@@ -248,5 +221,55 @@ namespace NoiseProtection
 			}
 			return pos - 1;
 		}
+
+		BitsVector FromHamming(BitsVector input, size_t len = 0)
+		{
+			BitsVector output;
+
+			output.reserve(input.size() * MAX_MSG_LEN / MAX_BLOCK_LEN);
+
+			size_t index = 0;
+
+			while (true)
+			{
+				if (input.size() - index > MAX_BLOCK_LEN)
+				{
+					BitsVector block;
+					try
+					{
+
+						block = DecodeBlock(BitsVector(input.begin() + index, input.begin() + index + MAX_BLOCK_LEN));
+						output.insert(output.end(), block.begin(), block.end());
+						index += MAX_BLOCK_LEN;
+
+					}
+					catch (FlipBitException)
+					{
+						auto i = FindFlip(block);
+						input[i + index] = !input[i + index];
+					}
+				}
+				else
+				{
+					BitsVector block;
+					try
+					{
+						BitsVector block = DecodeBlock(BitsVector(input.begin() + index, input.end()));
+						output.insert(output.end(), block.begin(), block.end());
+						break;
+					}
+					catch (FlipBitException)
+					{
+						auto i = FindFlip(block);
+						//if (i + index < input.size())
+							input[i + index] = !input[i + index];
+					}
+				}
+			}
+			if (len != 0)output.resize(len);
+			return output;
+
+		}
+
 	}
 }
