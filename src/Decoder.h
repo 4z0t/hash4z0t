@@ -154,7 +154,7 @@ namespace H4z0t {
 
 		if (header.comp == CompressionType::SF)
 		{
-			Compression::ShannonFano::Decoder d;
+			Compression::ShannonFano::Decoder d(header.dataLen);
 			Compression::BytesVector buff;
 			for (uintmax_t i = 0; i < header.dataLen;)
 			{

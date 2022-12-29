@@ -59,7 +59,7 @@ namespace H4z0t
 
 		~FileData() {};
 	private:
-		std::array<size_t, 256> _data;
+		std::array<size_t, 256> _data{};
 	};
 
 

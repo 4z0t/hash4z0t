@@ -204,8 +204,8 @@ namespace H4z0t {
 			const auto codes_norm = f.GetScaled();
 			Compression::FrequencyTable ft_norm(codes_norm);
 			const auto unitsToCodes = Compression::ShannonFano::FrequencyToCodes(ft_norm);
+			Compression::DisplayCodes(unitsToCodes);
 			Compression::BitsVector msg = Compression::ShannonFano::MakeHead(codes_norm);
-			Compression::PushBytes<size_t>(msg, h.dataLen);
 			Compression::BytesVector cache;
 
 			for (uintmax_t i = 0; i < h.dataLen; i++)

@@ -24,12 +24,12 @@ namespace Compression
 #else
 	void DisplayCodes(const std::vector<unit_normalized>& norm) {}
 #endif
-#if false
+#if true
 	void DisplayCodes(const std::unordered_map<unit, Code>& map)
 	{
 		for (const auto& k : map)
 		{
-			std::cout << "[" << (int)k.first << "]\t";
+			std::cout << "[" << (int)k.first << "]\t" << k.first<<"\t";
 			for (auto v : k.second)
 			{
 				std::cout << (int)v;
@@ -221,6 +221,7 @@ namespace Compression
 		{
 		public:
 			Decoder() {};
+			Decoder(size_t len):_len(len) {};
 			~Decoder() {};
 
 			bool Next(unit u, BytesVector& res)
@@ -356,9 +357,9 @@ namespace Compression
 			{
 			case 2:
 				unitsToCodes[frequency[start + 1].first].push_back(true);
+				unitsToCodes[frequency[start].first].push_back(false);
 				__fallthrough;
 			case 1:
-				unitsToCodes[frequency[start].first].push_back(false);
 				__fallthrough;
 			case 0:
 				return;
@@ -401,6 +402,7 @@ namespace Compression
 			auto t1 = passedThreshold / 2;
 			auto t2 = threshold - t1;
 			if (middle == start)middle++;
+			if (middle == end)middle--;
 			Split(unitsToCodes, frequency, start, middle, t1);
 			Split(unitsToCodes, frequency, middle, end, t2);
 		}
