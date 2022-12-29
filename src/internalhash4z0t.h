@@ -5,18 +5,92 @@
 #include <fstream>
 #include <assert.h>
 #include <exception>
+#include <locale>
+#include <codecvt>
+#include <vector>
+#include <list>
+#include <iostream>
 
-enum DataType
+
+
+namespace H4z0t
 {
-	Folder,
-	File
-};
+	using std::vector;
+	namespace FS = std::filesystem;
+	using String = std::string;
+	using Path = FS::path;
+	using DirEntry = FS::directory_entry;
 
-enum  Compression
-{
-	None
-};
 
-const uint32_t FMT_VERSION = 1;
+	class InvaildFileException : public std::exception {};
+	class CantOpenFileException : public std::exception { public: using std::exception::exception; };
+
+	typedef uint32_t u32;
+	enum class DataType :u32
+	{
+
+		Files,
+		Pack,
+	};
+
+	enum class CompressionType :u32
+	{
+		None,
+		SF,
+		LZ77
+
+	};
+
+	enum class EncryptionType :u32
+	{
+		None
+	};
+
+	enum class ProtectionType :u32
+	{
+		None,
+		Hamming,
+	};
+
+
+	const u32 FMT_VERSION = 1;
 #define FMT_HEADER_ "4z0t"
 #define DEFAULT_OUTPUT_PATH ("output." FMT_HEADER_)
+
+	const u32 FMT_NAME = 't0z4';
+	struct Header
+	{
+		u32 name = FMT_NAME;
+		u32 version = FMT_VERSION;
+		DataType type = DataType::Files;
+		u32 files_count = 0;
+	};
+
+
+
+	enum class Mode
+	{
+		None,
+		Decode,
+		Encode,
+		NotEnoughArguments,
+		IncorrectArguments
+	};
+
+	struct Arguments
+	{
+		Mode mode = Mode::None;
+		vector<Path> targets;
+		Path savePath;
+		CompressionType compression = CompressionType::None;
+		ProtectionType protection = ProtectionType::None;
+		EncryptionType encryption = EncryptionType::None;
+	};
+
+	using Files = std::list<DirEntry>;
+	Files GetFileList(const Path& path);
+
+
+
+
+}

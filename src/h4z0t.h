@@ -1,6 +1,13 @@
 #pragma once
-#define H4z0t_ h4z0t::
 
-
+#include "internalhash4z0t.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "ArgumentsManager.h"
+
+
+
+namespace H4z0t
+{
+
+}
