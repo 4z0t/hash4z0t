@@ -244,7 +244,7 @@ namespace NoiseProtection
 			{
 				size_t position = Pow2(i);
 
-				pos |= static_cast<size_t> (block[position - 1] != CalculateCheckBit(block, position)) << i;
+				pos |= static_cast<size_t> (CalculateCheckBit(block, position)) << i;
 			}
 			return pos - 1;
 		}
