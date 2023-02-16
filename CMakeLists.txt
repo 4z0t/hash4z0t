@@ -39,6 +39,7 @@ add_library(internal4z0t OBJECT
 set( CMAKE_PROJECT_NAME_TEST_SF "${CMAKE_PROJECT_NAME}_TestSF")
 set( CMAKE_PROJECT_NAME_TEST_LZ "${CMAKE_PROJECT_NAME}_TestLZ")
 set( CMAKE_PROJECT_NAME_TEST_HAMMING "${CMAKE_PROJECT_NAME}_TestHAMMING")
+set( CMAKE_PROJECT_NAME_TEST_REPLACE "${CMAKE_PROJECT_NAME}_TestREPLACE")
 
 add_executable(${CMAKE_PROJECT_NAME}
 
@@ -74,8 +75,22 @@ add_executable(${CMAKE_PROJECT_NAME_TEST_LZ}
     src/NoiseProtection/hamming.h
       "src/BitsAndBytes/BitsAndBytes.h")
 
+      
+      add_executable(${CMAKE_PROJECT_NAME_TEST_REPLACE}
+    src/test_ByteReplace/replace.cpp
+      "src/BitsAndBytes/BitsAndBytes.h")
 
-set_target_properties(${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME_TEST_LZ} ${CMAKE_PROJECT_NAME_TEST_SF} ${CMAKE_PROJECT_NAME_TEST_HAMMING} encoder decoder internal4z0t PROPERTIES
+set_target_properties(
+    ${CMAKE_PROJECT_NAME}
+    ${CMAKE_PROJECT_NAME_TEST_LZ}
+    ${CMAKE_PROJECT_NAME_TEST_SF} 
+    ${CMAKE_PROJECT_NAME_TEST_HAMMING} 
+    ${CMAKE_PROJECT_NAME_TEST_REPLACE}
+    encoder 
+    decoder 
+    internal4z0t 
+    
+        PROPERTIES
             CXX_STANDARD 17
             CXX_EXTENSIONS OFF
             )
