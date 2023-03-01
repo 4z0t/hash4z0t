@@ -16,7 +16,7 @@ add_library(encoder OBJECT
   "src/Compression/shannon_fano.h" 
   "src/Compression/compression.h"
   "src/Compression/lz77.h" 
-  "src/BitsAndBytes/BitsAndBytes.h")
+  "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
 add_library(decoder OBJECT 
    src/Decoder.h
@@ -24,7 +24,7 @@ add_library(decoder OBJECT
     "src/Compression/shannon_fano.h"
     "src/Compression/compression.h"
     "src/Compression/lz77.h"
-    "src/BitsAndBytes/BitsAndBytes.h")
+    "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
 
 
@@ -33,13 +33,14 @@ add_library(internal4z0t OBJECT
    src/internalhash4z0t.cpp
     src/internalhash4z0t.h
 
- )
+  "src/Encryption/rsa.h")
 
 
 set( CMAKE_PROJECT_NAME_TEST_SF "${CMAKE_PROJECT_NAME}_TestSF")
 set( CMAKE_PROJECT_NAME_TEST_LZ "${CMAKE_PROJECT_NAME}_TestLZ")
 set( CMAKE_PROJECT_NAME_TEST_HAMMING "${CMAKE_PROJECT_NAME}_TestHAMMING")
 set( CMAKE_PROJECT_NAME_TEST_REPLACE "${CMAKE_PROJECT_NAME}_TestREPLACE")
+set( CMAKE_PROJECT_NAME_TEST_RSA "${CMAKE_PROJECT_NAME}_TestRSA")
 
 add_executable(${CMAKE_PROJECT_NAME}
 
@@ -48,7 +49,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     "src/ArgumentsManager.h"
     "src/FileData.h"
     "src/BitsAndBytes/BitsAndBytes.h"
-    )
+     "src/Encryption/rsa.h")
 
 
 
@@ -58,7 +59,7 @@ add_executable(${CMAKE_PROJECT_NAME_TEST_SF}
     src/test_compression/sf.cpp
      "src/Compression/compression.h"
      "src/Compression/shannon_fano.h"
-      "src/BitsAndBytes/BitsAndBytes.h")
+      "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
 
 
@@ -66,19 +67,23 @@ add_executable(${CMAKE_PROJECT_NAME_TEST_LZ}
     src/test_compression/lz77.cpp
      "src/Compression/compression.h"
      "src/Compression/lz77.h"
-      "src/BitsAndBytes/BitsAndBytes.h")
+      "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
 
 
       add_executable(${CMAKE_PROJECT_NAME_TEST_HAMMING}
     src/test_noiseprotection/hamming.cpp
     src/NoiseProtection/hamming.h
-      "src/BitsAndBytes/BitsAndBytes.h")
+      "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
       
       add_executable(${CMAKE_PROJECT_NAME_TEST_REPLACE}
     src/test_ByteReplace/replace.cpp
-      "src/BitsAndBytes/BitsAndBytes.h")
+      "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
+
+            add_executable(${CMAKE_PROJECT_NAME_TEST_RSA}
+    src/test_RSA/rsa.cpp
+       "src/Encryption/rsa.h")
 
 set_target_properties(
     ${CMAKE_PROJECT_NAME}
@@ -86,6 +91,7 @@ set_target_properties(
     ${CMAKE_PROJECT_NAME_TEST_SF} 
     ${CMAKE_PROJECT_NAME_TEST_HAMMING} 
     ${CMAKE_PROJECT_NAME_TEST_REPLACE}
+    ${CMAKE_PROJECT_NAME_TEST_RSA}
     encoder 
     decoder 
     internal4z0t 
