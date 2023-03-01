@@ -9,29 +9,9 @@ bool TestRSA(const BitsAndBytes::BytesVector& original, size_t p, size_t q)
 	size_t e = Encryption::CalcE(t);
 	size_t d = Encryption::CalcD(e, t);
 
-
-	std::cout << "e:\t" << e << std::endl << "d:\t" << d << std::endl;
-
 	auto v = Encryption::RSA::Encode(original, e, n);
 	auto result = Encryption::RSA::Decode(v, d, n);
 
-	for (size_t i = 0; i < v.size(); i++)
-	{
-		std::cout << (int)v[i] << ", ";
-	}
-	std::cout << std::endl;
-
-	for (size_t i = 0; i < result.size(); i++)
-	{
-		std::cout << (int)result[i] << ", ";
-	}
-	std::cout << std::endl;
-
-	for (size_t i = 0; i < original.size(); i++)
-	{
-		std::cout << (int)original[i] << ", ";
-	}
-	std::cout << std::endl;
 
 	return result == original;
 

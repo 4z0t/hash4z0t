@@ -158,15 +158,10 @@ namespace Encryption
 		BytesVector Encode(const BytesVector& v, size_t e, size_t n)
 		{
 			UIntVector res(v.size());
-			std::cout << "encoding: " << std::endl;
 			for (size_t i = 0; i < v.size(); i++)
 			{
-				std::cout << (int)v[i] << " -> ";
-				size_t s = Encode(v[i], e, n);
-				std::cout << s << ", ";
-				res[i] = s;
+				res[i] = Encode(v[i], e, n);
 			}
-			std::cout << std::endl;
 			return UIntsToBytes(res);
 
 		}
@@ -176,15 +171,10 @@ namespace Encryption
 		{
 			UIntVector buffer = BytesToUInts(v);
 			BytesVector res(buffer.size());
-			std::cout << "decoding: " << std::endl;
 			for (size_t i = 0; i < buffer.size(); i++)
 			{
-				std::cout << buffer[i] << " -> ";
-				size_t s = Decode(buffer[i], d, n);
-				std::cout << s << ", ";
-				res[i] = s;
+				res[i] = Decode(buffer[i], d, n);
 			}
-			std::cout << std::endl;
 			return res;
 		}
 
