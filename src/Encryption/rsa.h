@@ -74,7 +74,7 @@ namespace Encryption
 	size_t PowMod(const size_t v, size_t n, size_t mod)
 	{
 		size_t result = 1;
-		size_t buffer = v;
+		size_t buffer = v % mod;
 
 		for (size_t i = 0; i < sizeof(n) * 8 && (1ull << i) <= n; i++)
 		{
@@ -92,6 +92,20 @@ namespace Encryption
 		return result;
 	}
 
+	/*size_t PowMod(const size_t v, size_t n, size_t mod)
+	{
+		size_t result = 1;
+
+
+		for (size_t i = 0; i < n; i++)
+		{
+			result *= v;
+			result %= mod;
+		}
+		return result;
+	}*/
+
+
 
 
 
@@ -99,12 +113,27 @@ namespace Encryption
 
 	UIntVector BytesToUInts(const BytesVector& v)
 	{
+		UIntVector res(v.size() / sizeof(size_t) + ((v.size() % sizeof(size_t) == 0) ? 0 : 1));
+		size_t buffer;
 
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			buffer = v[i];
+			res[i / sizeof(size_t)] |= buffer << ((i % sizeof(size_t)) * 8);
+		}
+		return res;
 	}
 
 	BytesVector UIntsToBytes(const UIntVector& v)
 	{
+		BytesVector res(v.size() * sizeof(size_t));
+		size_t buffer;
 
+		for (size_t i = 0; i < res.size(); i++)
+		{
+			res[i] = v[i / sizeof(size_t)] >> ((i % sizeof(size_t)) * 8);
+		}
+		return res;
 	}
 
 
@@ -128,19 +157,34 @@ namespace Encryption
 
 		BytesVector Encode(const BytesVector& v, size_t e, size_t n)
 		{
-			BytesVector res(v.size());
-
-			for (size_t i = 0; i < v.size(); i++)res[i] = Encode(v[i], e, n);
-			return res;
+			UIntVector res(v.size());
+			std::cout << "encoding: " << std::endl;
+			for (size_t i = 0; i < v.size(); i++)
+			{
+				std::cout << (int)v[i] << " -> ";
+				size_t s = Encode(v[i], e, n);
+				std::cout << s << ", ";
+				res[i] = s;
+			}
+			std::cout << std::endl;
+			return UIntsToBytes(res);
 
 		}
 
 
 		BytesVector Decode(const BytesVector& v, size_t d, size_t n)
 		{
-			BytesVector res(v.size());
-
-			for (size_t i = 0; i < v.size(); i++)res[i] = Decode(v[i], d, n);
+			UIntVector buffer = BytesToUInts(v);
+			BytesVector res(buffer.size());
+			std::cout << "decoding: " << std::endl;
+			for (size_t i = 0; i < buffer.size(); i++)
+			{
+				std::cout << buffer[i] << " -> ";
+				size_t s = Decode(buffer[i], d, n);
+				std::cout << s << ", ";
+				res[i] = s;
+			}
+			std::cout << std::endl;
 			return res;
 		}
 

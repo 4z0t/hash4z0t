@@ -15,11 +15,34 @@ bool TestRSA(const BitsAndBytes::BytesVector& original, size_t p, size_t q)
 	auto v = Encryption::RSA::Encode(original, e, n);
 	auto result = Encryption::RSA::Decode(v, d, n);
 
+	for (size_t i = 0; i < v.size(); i++)
+	{
+		std::cout << (int)v[i] << ", ";
+	}
+	std::cout << std::endl;
+
+	for (size_t i = 0; i < result.size(); i++)
+	{
+		std::cout << (int)result[i] << ", ";
+	}
+	std::cout << std::endl;
+
+	for (size_t i = 0; i < original.size(); i++)
+	{
+		std::cout << (int)original[i] << ", ";
+	}
+	std::cout << std::endl;
+
 	return result == original;
 
 }
 
-
+bool TestUIntToBytesAndBack(const BitsAndBytes::BytesVector& original)
+{
+	auto v = Encryption::BytesToUInts(original);
+	auto result = Encryption::UIntsToBytes(v);
+	return result == original;
+}
 
 BitsAndBytes::BytesVector RandomBytes(size_t size)
 {
@@ -45,18 +68,35 @@ size_t MakePrime(size_t max_v)
 
 int main()
 {
-	using namespace Encryption::RSA;
+	
 	std::srand(0);
-
-	size_t p = MakePrime(100000);
-	size_t q = MakePrime(100000);
-
-
-	std::cout << p << std::endl << q << std::endl;
 
 	for (size_t i = 0; i < 10; i++)
 	{
-		if (!TestRSA(RandomBytes(1'000), p, q))
+		if (!TestUIntToBytesAndBack(RandomBytes(1'000)))
+		{
+			std::cerr << "Failed  TestUIntToBytesAndBack for \t\t\"" << i << "\"\n";
+		}
+		else
+		{
+			std::cout << "Success TestUIntToBytesAndBack for \t\"" << i << "\"\n";
+		}
+	}
+
+	//std::cout << Encryption::PowMod(3, 8, 3) << std::endl;
+
+
+	size_t p = MakePrime(UINT64_MAX);
+	size_t q = MakePrime(UINT64_MAX);
+	p = 3557;
+	q = 2579;
+
+
+	std::cout << p << std::endl << q << std::endl << p * q << std::endl;
+
+	for (size_t i = 0; i < 10; i++)
+	{
+		if (!TestRSA(RandomBytes(16), p, q))
 		{
 			std::cerr << "Failed  encryption for \t\t\"" << i << "\"\n";
 		}
