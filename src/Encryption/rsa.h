@@ -92,21 +92,6 @@ namespace Encryption
 		return result;
 	}
 
-	/*size_t PowMod(const size_t v, size_t n, size_t mod)
-	{
-		size_t result = 1;
-
-
-		for (size_t i = 0; i < n; i++)
-		{
-			result *= v;
-			result %= mod;
-		}
-		return result;
-	}*/
-
-
-
 
 
 	using UIntVector = std::vector<size_t>;
