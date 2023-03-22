@@ -41,6 +41,7 @@ set( CMAKE_PROJECT_NAME_TEST_LZ "${CMAKE_PROJECT_NAME}_TestLZ")
 set( CMAKE_PROJECT_NAME_TEST_HAMMING "${CMAKE_PROJECT_NAME}_TestHAMMING")
 set( CMAKE_PROJECT_NAME_TEST_REPLACE "${CMAKE_PROJECT_NAME}_TestREPLACE")
 set( CMAKE_PROJECT_NAME_TEST_RSA "${CMAKE_PROJECT_NAME}_TestRSA")
+set( CMAKE_PROJECT_NAME_TEST_BMP "${CMAKE_PROJECT_NAME}_TestBMP")
 
 add_executable(${CMAKE_PROJECT_NAME}
 
@@ -50,8 +51,6 @@ add_executable(${CMAKE_PROJECT_NAME}
     "src/FileData.h"
     "src/BitsAndBytes/BitsAndBytes.h"
      "src/Encryption/rsa.h")
-
-
 
 
 
@@ -71,19 +70,23 @@ add_executable(${CMAKE_PROJECT_NAME_TEST_LZ}
 
 
 
-      add_executable(${CMAKE_PROJECT_NAME_TEST_HAMMING}
+add_executable(${CMAKE_PROJECT_NAME_TEST_HAMMING}
     src/test_noiseprotection/hamming.cpp
     src/NoiseProtection/hamming.h
       "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
       
-      add_executable(${CMAKE_PROJECT_NAME_TEST_REPLACE}
+add_executable(${CMAKE_PROJECT_NAME_TEST_REPLACE}
     src/test_ByteReplace/replace.cpp
       "src/BitsAndBytes/BitsAndBytes.h" "src/Encryption/rsa.h")
 
-            add_executable(${CMAKE_PROJECT_NAME_TEST_RSA}
+add_executable(${CMAKE_PROJECT_NAME_TEST_RSA}
     src/test_RSA/rsa.cpp
        "src/Encryption/rsa.h")
+
+add_executable(${CMAKE_PROJECT_NAME_TEST_BMP}
+    src/test_BMP/bmp.cpp
+       "src/Encryption/bmp2bit.h")
 
 set_target_properties(
     ${CMAKE_PROJECT_NAME}
@@ -92,6 +95,7 @@ set_target_properties(
     ${CMAKE_PROJECT_NAME_TEST_HAMMING} 
     ${CMAKE_PROJECT_NAME_TEST_REPLACE}
     ${CMAKE_PROJECT_NAME_TEST_RSA}
+    ${CMAKE_PROJECT_NAME_TEST_BMP}
     encoder 
     decoder 
     internal4z0t 
