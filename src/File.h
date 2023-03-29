@@ -76,11 +76,29 @@ namespace H4z0t {
 			}
 		}
 
+		inline bool IsEOF() const
+		{
+			return _file->eof();
+		}
+
+
+		size_t GetPos()
+		{
+			return _file->tellg();
+		}
+
+		void SetPos(size_t pos)
+		{
+			_file->seekg(pos);
+		}
+
+
 		inline char Get()
 		{
 			assert(_file != nullptr);
 			return _file->get();
 		}
+
 
 		inline void Put(char c)
 		{
