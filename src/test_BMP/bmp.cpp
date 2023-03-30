@@ -20,19 +20,21 @@ BitsAndBytes::BytesVector RandomBytes(size_t size)
 	return res;
 }
 
+union Pixel
+{
+	struct {
+		uint8_t blue;
+		uint8_t green;
+		uint8_t red;
+		uint8_t alpha;
+	};
+	uint32_t quad;
+};
+
 
 uint32_t EncodeByteInQuad(uint32_t quad, uint8_t byte)
 {
-	union
-	{
-		struct {
-			uint8_t red;
-			uint8_t green;
-			uint8_t blue;
-			uint8_t alpha;
-		};
-		uint32_t quad;
-	}pixel;
+	Pixel pixel;
 	pixel.quad = quad;
 	pixel.blue &= 0xFC;
 	pixel.blue |= (byte >> 6) & 0x3;
@@ -48,16 +50,7 @@ uint32_t EncodeByteInQuad(uint32_t quad, uint8_t byte)
 
 uint8_t ExtractByteFromQuad(uint32_t quad)
 {
-	union
-	{
-		struct {
-			uint8_t red;
-			uint8_t green;
-			uint8_t blue;
-			uint8_t alpha;
-		};
-		uint32_t quad;
-	}pixel;
+	Pixel pixel;
 	pixel.quad = quad;
 
 	uint8_t byte = ((pixel.blue & 0x3) << 6) | ((pixel.green & 0x3) << 4) | ((pixel.red & 0x3) << 2) | (pixel.alpha & 0x3);
